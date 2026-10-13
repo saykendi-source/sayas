@@ -6,7 +6,10 @@
 <meta name="theme-color" content="#6d5dfc">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Asisten Saya</title>
-<link rel="manifest" id="mf">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Asisten Saya">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -129,8 +132,8 @@ let items=LS('a.items',[]),cfg=LS('a.cfg',{url:'',token:'',name:''}),queue=LS('a
 const ok=()=>cfg.url&&cfg.token;
 const find=id=>items.find(x=>x.id===id);
 const persist=()=>{SV('a.items',items);SV('a.q',queue)};
-const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repeat:'none',remind:type==='bill'?1440:30,amount:0,done:false,pinned:false,tag:'',prio:0,paid:'',calId:'',created:new Date().toISOString(),kind:'normal',donorLast:'',donorCount:0,donorInterval:70,donorUnit:'days',donorHistory:[],status:'open',pendingMonths:''});
-const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0,donorCount:+o.donorCount||0,donorInterval:+o.donorInterval||70,donorHistory:Array.isArray(o.donorHistory)?o.donorHistory:[],status:'open',pendingMonths:''});
+const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repeat:'none',remind:type==='bill'?1440:30,amount:0,done:false,pinned:false,tag:'',prio:0,paid:'',calId:'',created:new Date().toISOString(),kind:'normal',donorLast:'',donorCount:0,donorInterval:70,donorUnit:'days',donorHistory:[],status:'open',pendingMonths:'',history:[],snoozeUntil:''});
+const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0,donorCount:+o.donorCount||0,donorInterval:+o.donorInterval||70,donorHistory:Array.isArray(o.donorHistory)?o.donorHistory:[],status:(['open','pending','done'].includes(o.status)?o.status:'open'),pendingMonths:String(o.pendingMonths||''),history:Array.isArray(o.history)?o.history:[],snoozeUntil:o.snoozeUntil||''});
 
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2200)}
 function setSync(s){syncState=s;$('#dot').className='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'')}
@@ -160,11 +163,12 @@ async function pull(){
   if(!ok())return;
   await flush();
   if(queue.length)return;
-  try{setSync('busy');const j=await api({},true);items=j.items.map(norm);persist();setSync('ok');render()}
+  try{setSync('busy');const j=await api({},true);const remote=(Array.isArray(j.items)?j.items:[]).map(norm);const rids=new Set(remote.map(x=>x.id));const localOnly=items.filter(x=>!rids.has(x.id));if(localOnly.length){setSync('err');toast('Ada data lokal berbeda. Backup dahulu; data belum ditimpa.');return}items=remote;persist();setSync('ok');render()}
   catch(e){setSync('err');toast('Sinkron gagal: '+e.message)}
 }
 
 /* ===== data ops ===== */
+function logAction(it, action, extra={}){it.history=Array.isArray(it.history)?it.history:[];it.history.push({at:new Date().toISOString(),action,...extra});if(it.history.length>200)it.history=it.history.slice(-200)}
 function upsert(it){
   const i=items.findIndex(x=>x.id===it.id);
   if(i>=0)items[i]=it;else items.unshift(it);
@@ -185,7 +189,7 @@ function donorComplete(id){
   const lastNumber=Math.max(0,+it.donorCount||0)+1;
   if(!confirm('Catat donor ke-'+lastNumber+' pada '+fmt(actual)+'?'))return;
   it.donorHistory=Array.isArray(it.donorHistory)?it.donorHistory:[];
-  it.donorHistory.push({date:actual,number:lastNumber,place:it.place||''});
+  it.donorHistory.push({date:actual,number:lastNumber,place:it.place||''});logAction(it,'Donor ke-'+lastNumber,{date:actual,place:it.place||''});
   it.donorCount=lastNumber;it.donorLast=actual;it.date=donorNext(it);it.done=false;it.status='open';
   upsert(it);toast('Donor ke-'+lastNumber+' tercatat ✓');
 }
@@ -217,8 +221,9 @@ function billInfo(b){
 }
 function needsAttention(x){
  if(x.type==='idea')return x.status==='pending';
- if(x.type==='bill'){const b=billInfo(x);return !b.paid&&(b.left<=0||b.pending)}
+ if(x.type==='bill'){if(x.snoozeUntil&&x.snoozeUntil>today())return false;const b=billInfo(x);return !b.paid&&(b.left<=0||b.pending)}
  if(x.done||x.status==='done')return false;
+ if(x.snoozeUntil&&x.snoozeUntil>today())return false;
  if(x.status==='pending')return true;
  const date=x.type==='reminder'?nextOcc(x):x.date;
  if(!date)return false;
@@ -226,6 +231,7 @@ function needsAttention(x){
 }
 function attentionCounts(){const out={idea:0,reminder:0,bill:0,task:0};items.forEach(x=>{if(out[x.type]!==undefined&&needsAttention(x))out[x.type]++});return out}
 function statusBtn(x){return `<button class="mini ${x.status==='pending'?'pending':''}" data-act="pending" data-id="${x.id}">${x.status==='pending'?'↩ Kembali aktif':'⏳ Belum terlaksana'}</button>`}
+function snoozeBtn(x){return `<button class="mini" data-act="snooze" data-id="${x.id}">🕒 Tunda</button>`}
 function statusChip(x){return x.status==='pending'?'<span class="chip bad">Belum terlaksana</span>':''}
 
 /* ===== render ===== */
@@ -233,7 +239,7 @@ function render(){
   const h=new Date().getHours(),g=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam';
   $('#hi').textContent=`${g}${cfg.name?', '+cfg.name:''} 👋`;
   const n=new Date();$('#dt').textContent=`${DAY[n.getDay()]}, ${n.getDate()} ${MON[n.getMonth()]} ${n.getFullYear()}`;
-  $('#bn').innerHTML=ok()?'':'<div class="banner">Mode lokal: data hanya di HP ini. Buka ⚙ untuk hubungkan Google Calendar.</div>';
+  $('#bn').innerHTML=(ok()?'':'<div class="banner">Mode lokal: data hanya di HP ini. Buka ⚙ untuk hubungkan Google Calendar.</div>')+(deferredInstallPrompt?'<div class="banner"><button data-act="install">📲 Instal aplikasi pada HP</button></div>':'');
   const T=today(),R=items.filter(x=>x.type==='reminder'&&!x.done),B=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)}));
   $('#stats').innerHTML=[[R.filter(x=>nextOcc(x)===T).length,'Agenda hari ini'],[B.filter(x=>x.i.thisMonth&&!x.i.paid).length,'Tagihan belum lunas'],[items.filter(x=>x.type==='task'&&!x.done).length,'Tugas tersisa']].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
   const badges=attentionCounts();
@@ -249,7 +255,7 @@ function vIdea(){
   return `<div class="cap"><input id="cap" placeholder="Ada ide? Tulis di sini…" enterkeyhint="send"><button class="go" data-act="cap">${I.plus}</button></div>`+
   (L.length?L.map(x=>`<div class="card" style="--c:var(--idea)" data-act="edit" data-id="${x.id}"><div class="body"><div class="t">${esc(x.title)}</div>
    ${meta([x.tag?`<span class="chip">#${esc(x.tag)}</span>`:'',statusChip(x),`<span>${fmt(x.created.slice(0,10))}</span>`])}
-   <div class="acts">${statusBtn(x)}<button class="mini ${x.pinned?'on':''}" data-act="pin" data-id="${x.id}">${I.pin}${x.pinned?'Disematkan':'Sematkan'}</button><button class="mini" data-act="conv" data-type="task" data-id="${x.id}">→ Tugas</button><button class="mini" data-act="conv" data-type="reminder" data-id="${x.id}">→ Pengingat</button></div></div></div>`).join(''):empty('💡','Belum ada ide.<br>Tulis yang terlintas, nanti bisa dijadikan tugas.'));
+   <div class="acts">${statusBtn(x)}${snoozeBtn(x)}<button class="mini ${x.pinned?'on':''}" data-act="pin" data-id="${x.id}">${I.pin}${x.pinned?'Disematkan':'Sematkan'}</button><button class="mini" data-act="conv" data-type="task" data-id="${x.id}">→ Tugas</button><button class="mini" data-act="conv" data-type="reminder" data-id="${x.id}">→ Pengingat</button></div></div></div>`).join(''):empty('💡','Belum ada ide.<br>Tulis yang terlintas, nanti bisa dijadikan tugas.'));
 }
 function remCard(x){
   const o=nextOcc(x)||today(),d=parse(o),late=!x.done&&o<today()&&(x.repeat==='none'||x.kind==='donor');
@@ -258,11 +264,11 @@ function remCard(x){
     <div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
     <div class="body"><div class="t">🩸 ${esc(x.title||'Donor darah')} · Donor ke-${(+x.donorCount||0)+1}</div>
     ${meta([`<span>${esc(x.time||'09:00')}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',`<span class="chip">Setiap ${x.donorInterval||70} ${x.donorUnit==='months'?'bulan':'hari'}</span>`,late?'<span class="chip bad">Sudah melewati rencana</span>':'',statusChip(x)])}
-    <div class="acts">${statusBtn(x)}<button class="mini" data-act="donorcomplete" data-id="${x.id}">${I.check} Catat sudah donor</button>
+    <div class="acts">${statusBtn(x)}${snoozeBtn(x)}<button class="mini" data-act="donorcomplete" data-id="${x.id}">${I.check} Catat sudah donor</button>
     <span class="mini">Terakhir: ${x.donorLast?fmt(x.donorLast):'Belum diisi'}</span></div></div></div>`;
   return `<div class="card ${x.done?'done':''}" style="--c:${late?'var(--bad)':'var(--rem)'}" data-act="edit" data-id="${x.id}">
    <div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
-   <div class="body"><div class="t">${esc(x.title)}</div>${meta([`<span>${x.time||'09:00'}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',rep?`<span class="chip">${rep}</span>`:'',late?'<span class="chip bad">Terlewat</span>':'',statusChip(x)])}<div class="acts">${statusBtn(x)}</div></div>
+   <div class="body"><div class="t">${esc(x.title)}</div>${meta([`<span>${x.time||'09:00'}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',rep?`<span class="chip">${rep}</span>`:'',late?'<span class="chip bad">Terlewat</span>':'',statusChip(x)])}<div class="acts">${statusBtn(x)}${snoozeBtn(x)}</div></div>
    ${x.repeat==='none'?`<button class="chk ${x.done?'on':''}" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>`:''}</div>`;
 }
 function vRem(){
@@ -274,20 +280,20 @@ function vRem(){
 }
 function vBill(){
   const L=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)})).sort((a,b)=>a.i.due.localeCompare(b.i.due));
-  const M=L.filter(x=>x.i.thisMonth),tot=M.reduce((s,x)=>s+x.b.amount,0),pd=M.filter(x=>x.i.paid).reduce((s,x)=>s+x.b.amount,0);
-  const sum=L.length?`<div class="sum"><small>Total tagihan bulan ini</small><b>${rp(tot)}</b><div class="bar"><i style="width:${tot?pd/tot*100:0}%"></i></div><small style="display:block;margin-top:8px">Lunas ${rp(pd)} · Sisa ${rp(tot-pd)}</small></div>`:'';
+  const month=today().slice(0,7);const active=L.filter(x=>x.b.date&&x.b.date.slice(0,7)<=month),tot=active.reduce((s,x)=>s+x.b.amount,0),pd=active.filter(x=>(x.b.paid||'').split(',').includes(month)).reduce((s,x)=>s+x.b.amount,0);const arrears=L.filter(x=>x.i.left<0&&!x.i.paid).reduce((s,x)=>s+x.b.amount,0);
+  const sum=L.length?`<div class="sum"><small>Total tagihan bulan ini</small><b>${rp(tot)}</b><div class="bar"><i style="width:${tot?pd/tot*100:0}%"></i></div><small style="display:block;margin-top:8px">Lunas ${rp(pd)} · Sisa bulan ini ${rp(tot-pd)} · Tunggakan tertua ${rp(arrears)}</small></div>`:'';
   return sum+(L.length?L.map(({b,i})=>{
     const d=parse(i.due),late=!i.paid&&i.left<0;
     const st=i.paid?'<span class="chip ok">Lunas ✓</span>':late?`<span class="chip bad">Terlambat ${-i.left} hari</span>`:i.left===0?'<span class="chip bad">Jatuh tempo hari ini</span>':`<span class="chip">${i.left<=7?i.left+' hari lagi':'Tgl '+d.getDate()}</span>`;
     return `<div class="card ${i.paid?'done':''}" style="--c:${late?'var(--bad)':'var(--bill)'}" data-act="edit" data-id="${b.id}"><div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
-     <div class="body"><div class="t">${esc(b.title)}</div>${meta([`<b>${rp(b.amount)}</b>`,st,i.pending?'<span class="chip bad">Belum terlaksana</span>':''])}<div class="acts"><button class="mini ${i.pending?'pending':''}" data-act="billpending" data-id="${b.id}">${i.pending?'↩ Aktif':'⏳ Belum terlaksana'}</button></div></div>
+     <div class="body"><div class="t">${esc(b.title)}</div>${meta([`<b>${rp(b.amount)}</b>`,st,i.pending?'<span class="chip bad">Belum terlaksana</span>':''])}<div class="acts"><button class="mini ${i.pending?'pending':''}" data-act="billpending" data-id="${b.id}">${i.pending?'↩ Aktif':'⏳ Belum terlaksana'}</button>${snoozeBtn(b)}</div></div>
      <button class="chk ${i.paid?'on':''}" data-act="paid" data-id="${b.id}">${i.paid?I.check:''}</button></div>`}).join(''):empty('💸','Belum ada tagihan.<br>Tambahkan listrik, internet, UKT, cicilan, dll.'));
 }
 function vTask(){
   const L=items.filter(x=>x.type==='task'),A=L.filter(x=>!x.done).sort((a,b)=>b.prio-a.prio||(a.date||'9').localeCompare(b.date||'9')),D=L.filter(x=>x.done);
   const card=x=>`<div class="card ${x.done?'done':''}" style="--c:${x.prio?'var(--bad)':'var(--task)'}" data-act="edit" data-id="${x.id}">
    <button class="chk ${x.done?'on':''}" style="--c:var(--task)" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>
-   <div class="body"><div class="t">${esc(x.title)}</div>${meta([x.prio?'<span class="chip bad">Penting</span>':'',x.date?`<span>${fmt(x.date)}${x.time?' · '+x.time:''}</span>`:'',statusChip(x)])}<div class="acts">${statusBtn(x)}</div></div></div>`;
+   <div class="body"><div class="t">${esc(x.title)}</div>${meta([x.prio?'<span class="chip bad">Penting</span>':'',x.date?`<span>${fmt(x.date)}${x.time?' · '+x.time:''}</span>`:'',statusChip(x)])}<div class="acts">${statusBtn(x)}${snoozeBtn(x)}</div></div></div>`;
   return (A.length?A.map(card).join(''):empty('✅','Semua beres!<br>Tidak ada tugas tersisa.'))+(D.length?`<h3 class="sec">Selesai (${D.length})</h3>`+D.map(card).join(''):'');
 }
 
@@ -339,11 +345,17 @@ function save(){
   if(it.type==='reminder'&&!it.date)it.date=today();
   if(it.type!=='bill'&&it.kind!=='donor')it.done=it.status==='done';
   delete it._day;it.amount=+it.amount||0;it.prio=+it.prio||0;it.remind=+it.remind||0;
-  upsert(it);closeSheet();toast('Tersimpan ✓');
+  logAction(it,'Disimpan',{status:it.status});upsert(it);closeSheet();toast('Tersimpan ✓');
 }
 function openCfg(){
   openSheet(`<p class="hint"><b>Hubungkan ke Google Calendar.</b> Tempel URL web app Apps Script (berakhiran /exec) dan token yang sama dengan di Code.gs.</p>
   ${fl('Nama panggilan',`<input id="c-name" value="${esc(cfg.name)}">`)}${fl('URL Apps Script',`<input id="c-url" value="${esc(cfg.url)}" placeholder="https://script.google.com/macros/s/…/exec">`)}${fl('Token',`<input id="c-token" type="password" value="${esc(cfg.token)}">`)}
+  <p class="hint">Cadangkan data sebelum pindah perangkat atau mengganti backend.</p>
+  <div class="btns"><button class="btn sec" data-act="backup">⬇ Backup JSON</button><button class="btn sec" data-act="restore">⬆ Restore JSON</button></div>
+  <div class="btns"><button class="btn sec" data-act="history">📜 Riwayat</button><button class="btn sec" data-act="localnotif">🔔 Izin notifikasi</button></div>
+  <p class="hint">Notifikasi browser hanya dicek ketika aplikasi sedang terbuka; notifikasi otomatis ketika tertutup memerlukan layanan push dan backend.</p>
+  <div class="btns"><button class="btn sec" data-act="install">📲 Petunjuk Instal</button><button class="btn sec" data-act="update">🔄 Cek pembaruan</button></div>
+  <p class="hint">Versi aplikasi: <b>2.1.0</b>. Pembaruan tidak menghapus data lokal, tetapi backup tetap dianjurkan.</p>
   <div class="btns"><button class="btn sec" data-act="close">Batal</button><button class="btn" data-act="cfgsave">Simpan & Sinkron</button></div>`);
 }
 
@@ -359,16 +371,24 @@ document.addEventListener('click',e=>{
   else if(a==='save')save()
   else if(a==='donorcomplete'&&it)donorComplete(id)
   else if(a==='del'){if(confirm('Hapus item ini?')){remove(form.id);closeSheet()}}
-  else if(a==='done'&&it){it.done=!it.done;it.status=it.done?'done':'open';upsert(it)}
-  else if(a==='pending'&&it){it.status=it.status==='pending'?'open':'pending';if(it.status==='pending')it.done=false;upsert(it)}
-  else if(a==='billpending'&&it){const k=billInfo(it).key,z=new Set((it.pendingMonths||'').split(',').filter(Boolean));z.has(k)?z.delete(k):z.add(k);it.pendingMonths=[...z].join(',');upsert(it)}
+  else if(a==='done'&&it){it.done=!it.done;it.status=it.done?'done':'open';logAction(it,it.done?'Selesai':'Dibuka kembali');upsert(it)}
+  else if(a==='pending'&&it){it.status=it.status==='pending'?'open':'pending';if(it.status==='pending')it.done=false;logAction(it,it.status==='pending'?'Belum terlaksana':'Aktif kembali');upsert(it)}
+  else if(a==='billpending'&&it){const k=billInfo(it).key,z=new Set((it.pendingMonths||'').split(',').filter(Boolean));z.has(k)?z.delete(k):z.add(k);it.pendingMonths=[...z].join(',');logAction(it,z.has(k)?'Belum terlaksana':'Status ditarik',{period:k});upsert(it)}
   else if(a==='attn'){const first=['bill','reminder','task','idea'].find(t=>items.some(x=>x.type===t&&needsAttention(x)));if(first){tab=first;render();scrollTo(0,0)}}
   else if(a==='pin'&&it){it.pinned=!it.pinned;upsert(it)}
-  else if(a==='paid'&&it){const k=billInfo(it).key,s=new Set((it.paid||'').split(',').filter(Boolean));s.has(k)?s.delete(k):s.add(k);it.paid=[...s].join(',');if(s.has(k)){it.pendingMonths=(it.pendingMonths||'').split(',').filter(v=>v&&v!==k).join(',')}upsert(it)}
+  else if(a==='paid'&&it){const k=billInfo(it).key,s=new Set((it.paid||'').split(',').filter(Boolean));s.has(k)?s.delete(k):s.add(k);it.paid=[...s].join(',');logAction(it,s.has(k)?'Tagihan lunas':'Pembayaran dibatalkan',{period:k,amount:it.amount});if(s.has(k)){it.pendingMonths=(it.pendingMonths||'').split(',').filter(v=>v&&v!==k).join(',')}upsert(it)}
   else if(a==='conv'&&it){openForm({...it,type:el.dataset.type,date:el.dataset.type==='reminder'?today():'',remind:30})}
   else if(a==='cap')capture()
   else if(a==='cfg')openCfg()
-  else if(a==='cfgsave'){cfg={name:$('#c-name').value.trim(),url:$('#c-url').value.trim(),token:$('#c-token').value.trim()};SV('a.cfg',cfg);closeSheet();render();if(ok()){toast('Menyambungkan…');pull().then(()=>{items.forEach(x=>{if(!queue.some(q=>q.id===x.id))queue.push({action:'save',id:x.id,item:x})});persist();flush()})}}
+  else if(a==='snooze'&&it){const value=prompt('Tunda perhatian sampai tanggal (YYYY-MM-DD). Kosongkan untuk membatalkan tunda:',it.snoozeUntil||ymd(new Date(Date.now()+86400000)));if(value===null)return;if(value&&(!/^\d{4}-\d{2}-\d{2}$/.test(value)||ymd(parse(value))!==value)){toast('Tanggal tidak valid');return}it.snoozeUntil=value;logAction(it,value?'Ditunda sampai '+value:'Tunda dibatalkan');upsert(it)}
+  else if(a==='backup')downloadBackup()
+  else if(a==='restore')restorePicker()
+  else if(a==='history')openHistory()
+  else if(a==='localnotif')requestLocalNotifications()
+  else if(a==='update')checkUpdate()
+  else if(a==='applyupdate'&&swReg?.waiting)swReg.waiting.postMessage({type:'SKIP_WAITING'})
+  else if(a==='install')installPWA()
+  else if(a==='cfgsave'){const next={name:$('#c-name').value.trim(),url:$('#c-url').value.trim(),token:$('#c-token').value.trim()};const changed=next.url!==cfg.url||next.token!==cfg.token;if(changed&&next.url&&next.token&&items.length&&!confirm('Backend baru: data lokal dapat berbeda dari cloud. Backup terlebih dahulu. Lanjutkan sambungan tanpa mengganti data lokal secara otomatis?'))return;cfg=next;SV('a.cfg',cfg);closeSheet();render();if(ok()){toast('Menyambungkan…');if(changed){setSync('busy');toast('Sambungan disimpan. Backup & Restore untuk migrasi; data lokal tidak ditimpa.');}else pull()}}
   e.stopPropagation?.();
 });
 document.addEventListener('change',e=>{if(e.target.id==='f-kind'&&form){collect();form.kind=e.target.value;if(form.kind==='donor'){form.title=form.title||'Donor darah';form.repeat='none'}openForm(form)}});
@@ -380,10 +400,27 @@ function capture(){
 window.addEventListener('online',flush);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
 
+
+/* ===== local utilities & PWA ===== */
+function downloadBackup(){const data={format:'asisten-saya-backup',version:2,exportedAt:new Date().toISOString(),items:items.map(norm)};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='asisten-saya-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('Backup diunduh (tanpa token)')}
+function restorePicker(){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=async()=>{try{const raw=JSON.parse(await input.files[0].text());if(raw.format!=='asisten-saya-backup'||!Array.isArray(raw.items)||raw.items.length>10000)throw Error('Format backup tidak valid');const ids=new Set();const restored=raw.items.map(x=>{if(!x||typeof x!=='object'||!TYPES[x.type]||typeof x.id!=='string'||typeof x.title!=='string'||ids.has(x.id))throw Error('Data tidak valid atau ID ganda');ids.add(x.id);return norm(x)});if(!confirm('Restore akan mengganti '+items.length+' data lokal dengan '+restored.length+' data backup. Lanjutkan?'))return;items=restored;queue=restored.map(x=>({action:'save',id:x.id,item:x}));persist();render();closeSheet();toast('Restore berhasil. Periksa sinkronisasi cloud.')}catch(e){toast('Gagal restore: '+e.message)}};input.click()}
+function openHistory(){const lines=[];items.forEach(x=>{(x.history||[]).forEach(h=>lines.push({name:x.title||x.type,...h}));(x.donorHistory||[]).forEach(h=>lines.push({name:x.title||'Donor darah',at:(h.date||today())+'T12:00:00',action:'Donor ke-'+h.number,place:h.place}))});lines.sort((a,b)=>String(b.at).localeCompare(String(a.at)));openSheet('<h3>Riwayat aktivitas</h3>'+ (lines.length?lines.slice(0,200).map(h=>`<div class="card"><div class="body"><b>${esc(h.name)}</b><div class="m">${esc(h.action)} · ${esc(String(h.at).slice(0,16).replace('T',' '))}${h.place?' · 📍 '+esc(h.place):''}</div></div></div>`).join(''):'<p class="hint">Belum ada aktivitas yang tercatat.</p>')+'<button class="btn" data-act="close">Tutup</button>')}
+async function requestLocalNotifications(){if(!('Notification'in window)){toast('Browser ini belum mendukung notifikasi');return}if(Notification.permission==='granted'){toast('Izin notifikasi sudah diberikan');return}const p=await Notification.requestPermission();toast(p==='granted'?'Notifikasi aktif selama aplikasi terbuka':'Izin notifikasi tidak diberikan')}
+const notified=LS('a.notified',{});
+function localAlert(){if(document.hidden||!('Notification'in window)||Notification.permission!=='granted')return;let changed=false;const now=Date.now();items.forEach(x=>{if(x.done||x.status==='done'||x.type==='idea')return;const due=x.type==='bill'?billInfo(x).due:(x.type==='reminder'?nextOcc(x):x.date);if(!due)return;const clock=x.time||'09:00',at=new Date(due+'T'+clock+':00').getTime()-(+x.remind||0)*60000;if(!Number.isFinite(at)||now<at||now-at>86400000)return;const key=x.id+'|'+due+'|'+clock;if(notified[key])return;notified[key]=today();changed=true;try{new Notification('Asisten Saya: '+x.title,{body:'Agenda/tagihan perlu perhatian',icon:'./icons/icon-192.png',tag:key})}catch(e){console.warn(e)}});if(changed){Object.keys(notified).forEach(k=>{if(notified[k]<ymd(new Date(Date.now()-7*86400000)))delete notified[k]});SV('a.notified',notified)}}
+setInterval(localAlert,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)localAlert()});
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;render()});
+async function installPWA(){if(!deferredInstallPrompt){toast('Gunakan menu Chrome ⋮ → Instal aplikasi / Tambahkan ke layar utama');return}deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;render()}
+let swReg=null;
+async function checkUpdate(){if(!swReg){toast('Pembaruan tersedia setelah aplikasi diakses lewat HTTPS');return}await swReg.update();if(swReg.waiting){showUpdate();return}toast('Pemeriksaan selesai; jika ada versi baru, opsi update akan muncul.')}
+function showUpdate(){if(document.getElementById('update-banner'))return;const el=document.createElement('div');el.id='update-banner';el.className='banner';el.innerHTML='Versi baru tersedia <button data-act="applyupdate" style="background:white;color:#6d5dfc;border-radius:8px;padding:7px;margin-left:8px">Perbarui sekarang</button>';document.querySelector('#bn').prepend(el)}
+if('serviceWorker'in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('./sw.js').then(r=>{swReg=r;if(r.waiting)showUpdate();r.addEventListener('updatefound',()=>{const worker=r.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)showUpdate()})})}).catch(e=>console.warn('Service worker:',e));let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})}
+
 /* ===== init ===== */
 $('#ic-cfg').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;
-$('#mf').href=URL.createObjectURL(new Blob([JSON.stringify({name:'Asisten Saya',short_name:'Asisten',start_url:'./',display:'standalone',background_color:'#f4f2ff',theme_color:'#6d5dfc',icons:[{src:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d5dfc"/><stop offset="1" stop-color="#ff7ab8"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="url(#g)"/><path d="M30 52l14 14 26-30" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>'),sizes:'any',type:'image/svg+xml',purpose:'any'}]})],{type:'application/manifest+json'}));
-items=items.map(norm);render();setSync(ok()?'busy':'local');pull();
+
+items=items.map(norm);render();localAlert();setSync(ok()?'busy':'local');pull();
 </script>
 </body>
 </html>
