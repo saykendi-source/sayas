@@ -1,3 +1,6 @@
+## Pembaruan nama aplikasi
+Nama instalasi PWA, judul halaman, dan nama notifikasi kini **SaySisten**. Cache service worker diperbarui menjadi `saysisten-v2.1.1`. Untuk perangkat yang sudah memasang aplikasi, ikon/nama di launcher mungkin perlu diinstal ulang.
+
 # Asisten Saya 2.1 — paket GitHub Pages / PWA
 
 ## Unggah ke GitHub Pages

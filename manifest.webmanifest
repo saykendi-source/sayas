@@ -1,6 +1,6 @@
 {
-  "name": "Asisten Saya",
-  "short_name": "Asisten",
+  "name": "SaySisten",
+  "short_name": "SaySisten",
   "description": "Ide, pengingat, donor darah, tagihan dan tugas",
   "start_url": "./index.html",
   "scope": "./",

@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#6d5dfc">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Asisten Saya</title>
+<title>SaySisten</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" href="./icons/icon-192.png">
-<meta name="apple-mobile-web-app-title" content="Asisten Saya">
+<meta name="apple-mobile-web-app-title" content="SaySisten">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -407,7 +407,7 @@ function restorePicker(){const input=document.createElement('input');input.type=
 function openHistory(){const lines=[];items.forEach(x=>{(x.history||[]).forEach(h=>lines.push({name:x.title||x.type,...h}));(x.donorHistory||[]).forEach(h=>lines.push({name:x.title||'Donor darah',at:(h.date||today())+'T12:00:00',action:'Donor ke-'+h.number,place:h.place}))});lines.sort((a,b)=>String(b.at).localeCompare(String(a.at)));openSheet('<h3>Riwayat aktivitas</h3>'+ (lines.length?lines.slice(0,200).map(h=>`<div class="card"><div class="body"><b>${esc(h.name)}</b><div class="m">${esc(h.action)} · ${esc(String(h.at).slice(0,16).replace('T',' '))}${h.place?' · 📍 '+esc(h.place):''}</div></div></div>`).join(''):'<p class="hint">Belum ada aktivitas yang tercatat.</p>')+'<button class="btn" data-act="close">Tutup</button>')}
 async function requestLocalNotifications(){if(!('Notification'in window)){toast('Browser ini belum mendukung notifikasi');return}if(Notification.permission==='granted'){toast('Izin notifikasi sudah diberikan');return}const p=await Notification.requestPermission();toast(p==='granted'?'Notifikasi aktif selama aplikasi terbuka':'Izin notifikasi tidak diberikan')}
 const notified=LS('a.notified',{});
-function localAlert(){if(document.hidden||!('Notification'in window)||Notification.permission!=='granted')return;let changed=false;const now=Date.now();items.forEach(x=>{if(x.done||x.status==='done'||x.type==='idea')return;const due=x.type==='bill'?billInfo(x).due:(x.type==='reminder'?nextOcc(x):x.date);if(!due)return;const clock=x.time||'09:00',at=new Date(due+'T'+clock+':00').getTime()-(+x.remind||0)*60000;if(!Number.isFinite(at)||now<at||now-at>86400000)return;const key=x.id+'|'+due+'|'+clock;if(notified[key])return;notified[key]=today();changed=true;try{new Notification('Asisten Saya: '+x.title,{body:'Agenda/tagihan perlu perhatian',icon:'./icons/icon-192.png',tag:key})}catch(e){console.warn(e)}});if(changed){Object.keys(notified).forEach(k=>{if(notified[k]<ymd(new Date(Date.now()-7*86400000)))delete notified[k]});SV('a.notified',notified)}}
+function localAlert(){if(document.hidden||!('Notification'in window)||Notification.permission!=='granted')return;let changed=false;const now=Date.now();items.forEach(x=>{if(x.done||x.status==='done'||x.type==='idea')return;const due=x.type==='bill'?billInfo(x).due:(x.type==='reminder'?nextOcc(x):x.date);if(!due)return;const clock=x.time||'09:00',at=new Date(due+'T'+clock+':00').getTime()-(+x.remind||0)*60000;if(!Number.isFinite(at)||now<at||now-at>86400000)return;const key=x.id+'|'+due+'|'+clock;if(notified[key])return;notified[key]=today();changed=true;try{new Notification('SaySisten: '+x.title,{body:'Agenda/tagihan perlu perhatian',icon:'./icons/icon-192.png',tag:key})}catch(e){console.warn(e)}});if(changed){Object.keys(notified).forEach(k=>{if(notified[k]<ymd(new Date(Date.now()-7*86400000)))delete notified[k]});SV('a.notified',notified)}}
 setInterval(localAlert,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)localAlert()});
 let deferredInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;render()});
