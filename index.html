@@ -127,8 +127,8 @@ let items=LS('a.items',[]),cfg=LS('a.cfg',{url:'',token:'',name:''}),queue=LS('a
 const ok=()=>cfg.url&&cfg.token;
 const find=id=>items.find(x=>x.id===id);
 const persist=()=>{SV('a.items',items);SV('a.q',queue)};
-const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repeat:'none',remind:type==='bill'?1440:30,amount:0,done:false,pinned:false,tag:'',prio:0,paid:'',calId:'',created:new Date().toISOString()});
-const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0});
+const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repeat:'none',remind:type==='bill'?1440:30,amount:0,done:false,pinned:false,tag:'',prio:0,paid:'',calId:'',created:new Date().toISOString(),kind:'normal',donorLast:'',donorCount:0,donorInterval:70,donorUnit:'days',donorHistory:[]});
+const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0,donorCount:+o.donorCount||0,donorInterval:+o.donorInterval||70,donorHistory:Array.isArray(o.donorHistory)?o.donorHistory:[]});
 
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2200)}
 function setSync(s){syncState=s;$('#dot').className='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'')}
@@ -169,7 +169,26 @@ function upsert(it){
   persist();render();enqueue({action:'save',id:it.id,item:it});
 }
 function remove(id){items=items.filter(x=>x.id!==id);persist();render();enqueue({action:'delete',id})}
+function addDonorInterval(date,value,unit){
+  const d=parse(date),n=Math.max(1,Number(value)||70);
+  if(unit==='months')return ymd(clampDay(d.getFullYear(),d.getMonth()+n,d.getDate()));
+  d.setDate(d.getDate()+n);return ymd(d);
+}
+function donorNext(it){return it.donorLast?addDonorInterval(it.donorLast,it.donorInterval,it.donorUnit):it.date||today()}
+function donorComplete(id){
+  const it=find(id);if(!it||it.kind!=='donor')return;
+  const actual=prompt('Tanggal donor yang telah dilakukan (YYYY-MM-DD):',today());
+  if(actual===null)return;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(actual)||ymd(parse(actual))!==actual||actual>today()){toast('Tanggal donor tidak valid');return}
+  const lastNumber=Math.max(0,+it.donorCount||0)+1;
+  if(!confirm('Catat donor ke-'+lastNumber+' pada '+fmt(actual)+'?'))return;
+  it.donorHistory=Array.isArray(it.donorHistory)?it.donorHistory:[];
+  it.donorHistory.push({date:actual,number:lastNumber,place:it.place||''});
+  it.donorCount=lastNumber;it.donorLast=actual;it.date=donorNext(it);it.done=false;
+  upsert(it);toast('Donor ke-'+lastNumber+' tercatat ✓');
+}
 function nextOcc(it){
+  if(it.type==='reminder'&&it.kind==='donor')return donorNext(it);
   if(!it.date)return null;
   const t=today();
   if(!it.repeat||it.repeat==='none'||it.date>=t)return it.date;
@@ -208,8 +227,14 @@ function vIdea(){
    <div class="acts"><button class="mini ${x.pinned?'on':''}" data-act="pin" data-id="${x.id}">${I.pin}${x.pinned?'Disematkan':'Sematkan'}</button><button class="mini" data-act="conv" data-type="task" data-id="${x.id}">→ Tugas</button><button class="mini" data-act="conv" data-type="reminder" data-id="${x.id}">→ Pengingat</button></div></div></div>`).join(''):empty('💡','Belum ada ide.<br>Tulis yang terlintas, nanti bisa dijadikan tugas.'));
 }
 function remCard(x){
-  const o=nextOcc(x),d=parse(o),late=!x.done&&o<today()&&x.repeat==='none';
+  const o=nextOcc(x)||today(),d=parse(o),late=!x.done&&o<today()&&(x.repeat==='none'||x.kind==='donor');
   const rep={weekly:'Tiap minggu',monthly:'Tiap bulan',yearly:'Tiap tahun'}[x.repeat];
+  if(x.kind==='donor')return `<div class="card" style="--c:#ef4770" data-act="edit" data-id="${x.id}">
+    <div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
+    <div class="body"><div class="t">🩸 ${esc(x.title||'Donor darah')} · Donor ke-${(+x.donorCount||0)+1}</div>
+    ${meta([`<span>${esc(x.time||'09:00')}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',`<span class="chip">Setiap ${x.donorInterval||70} ${x.donorUnit==='months'?'bulan':'hari'}</span>`,late?'<span class="chip bad">Sudah melewati rencana</span>':''])}
+    <div class="acts"><button class="mini" data-act="donorcomplete" data-id="${x.id}">${I.check} Catat sudah donor</button>
+    <span class="mini">Terakhir: ${x.donorLast?fmt(x.donorLast):'Belum diisi'}</span></div></div></div>`;
   return `<div class="card ${x.done?'done':''}" style="--c:${late?'var(--bad)':'var(--rem)'}" data-act="edit" data-id="${x.id}">
    <div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
    <div class="body"><div class="t">${esc(x.title)}</div>${meta([`<span>${x.time||'09:00'}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',rep?`<span class="chip">${rep}</span>`:'',late?'<span class="chip bad">Terlewat</span>':''])}</div>
@@ -251,7 +276,11 @@ function openForm(it){
   const seg=`<div class="seg">${Object.entries(TYPES).map(([k,v])=>`<button class="${t===k?'on':''}" style="--c:${v[1]}" data-act="ftype" data-type="${k}">${v[0]}</button>`).join('')}</div>`;
   let f=fl(t==='idea'?'Ide':'Judul',t==='idea'?`<textarea id="f-title" rows="3" placeholder="Tulis ide…">${esc(it.title)}</textarea>`:`<input id="f-title" value="${esc(it.title)}" placeholder="${t==='bill'?'mis. Listrik PLN':t==='reminder'?'mis. Rapat jurusan':'mis. Kirim laporan'}">`);
   if(t==='idea')f+=fl('Tag (opsional)',`<input id="f-tag" value="${esc(it.tag)}" placeholder="mis. proyek">`);
-  if(t==='reminder')f+=`<div class="row">${fl('Tanggal',`<input id="f-date" type="date" value="${it.date||today()}">`)}${fl('Jam',`<input id="f-time" type="time" value="${it.time||'09:00'}">`)}</div>`+fl('Lokasi',`<input id="f-place" value="${esc(it.place)}" placeholder="Opsional">`)+fl('Ulangi',`<select id="f-repeat">${opt([['none','Tidak berulang'],['weekly','Tiap minggu'],['monthly','Tiap bulan'],['yearly','Tiap tahun']],it.repeat)}</select>`);
+  if(t==='reminder')f+=fl('Jenis pengingat',`<select id="f-kind"><option value="normal" ${it.kind!=='donor'?'selected':''}>Pengingat biasa</option><option value="donor" ${it.kind==='donor'?'selected':''}>🩸 Donor darah</option></select>`);
+  if(t==='reminder'&&it.kind==='donor')f+=`<p class="hint">Isi donor terakhir dan nomor donor yang sudah dilakukan. Jadwal berikutnya akan dihitung otomatis.</p>
+    <div class="row">${fl('Tanggal donor terakhir',`<input id="f-donorLast" type="date" value="${it.donorLast||''}">`)}${fl('Donor terakhir ke-',`<input id="f-donorCount" type="number" min="0" step="1" value="${it.donorCount||0}">`)}</div>
+    <div class="row">${fl('Interval',`<input id="f-donorInterval" type="number" min="1" step="1" value="${it.donorInterval||70}">`)}${fl('Satuan',`<select id="f-donorUnit">${opt([['days','Hari'],['months','Bulan']],it.donorUnit||'days')}</select>`)}</div>`;
+  if(t==='reminder')f+=`<div class="row">${fl('Tanggal',`<input id="f-date" type="date" value="${it.date||today()}">`)}${fl('Jam',`<input id="f-time" type="time" value="${it.time||'09:00'}">`)}</div>`+fl('Lokasi',`<input id="f-place" value="${esc(it.place)}" placeholder="Opsional">`)+(it.kind==='donor'?'':fl('Ulangi',`<select id="f-repeat">${opt([['none','Tidak berulang'],['weekly','Tiap minggu'],['monthly','Tiap bulan'],['yearly','Tiap tahun']],it.repeat)}</select>`));
   if(t==='bill')f+=`<div class="row">${fl('Nominal (Rp)',`<input id="f-amount" type="number" inputmode="numeric" value="${it.amount||''}">`)}${fl('Jatuh tempo tgl',`<input id="f-day" type="number" min="1" max="31" value="${it.date?parse(it.date).getDate():''}" placeholder="1-31">`)}</div>`;
   if(t==='task')f+=fl('Prioritas',`<select id="f-prio">${opt([[0,'Biasa'],[1,'Penting']],it.prio)}</select>`)+`<div class="row">${fl('Tanggal (opsional)',`<input id="f-date" type="date" value="${it.date}">`)}${fl('Jam',`<input id="f-time" type="time" value="${it.time}">`)}</div>`;
   if(t!=='idea')f+=fl('Ingatkan lewat Google Calendar',`<select id="f-remind">${opt(REMIND,it.remind)}</select>`)+fl('Catatan',`<textarea id="f-note" rows="2">${esc(it.note)}</textarea>`);
@@ -259,7 +288,7 @@ function openForm(it){
 }
 function collect(){
   const g=id=>{const e=$('#'+id);return e?e.value:undefined};
-  const m={title:g('f-title'),tag:g('f-tag'),date:g('f-date'),time:g('f-time'),place:g('f-place'),repeat:g('f-repeat'),amount:g('f-amount'),prio:g('f-prio'),remind:g('f-remind'),note:g('f-note')};
+  const m={title:g('f-title'),tag:g('f-tag'),date:g('f-date'),time:g('f-time'),place:g('f-place'),repeat:g('f-repeat'),amount:g('f-amount'),prio:g('f-prio'),remind:g('f-remind'),note:g('f-note'),kind:g('f-kind'),donorLast:g('f-donorLast'),donorCount:g('f-donorCount'),donorInterval:g('f-donorInterval'),donorUnit:g('f-donorUnit')};
   Object.keys(m).forEach(k=>{if(m[k]!==undefined)form[k]=m[k]});
   const day=g('f-day');if(day!==undefined)form._day=day;
 }
@@ -275,6 +304,12 @@ function save(){
   }
   if(it.type==='idea'){it.date='';it.repeat='none'}
   if(it.type==='task'){it.repeat='none'}
+  if(it.type==='reminder'&&it.kind==='donor'){
+    it.donorInterval=Number(it.donorInterval);it.donorCount=Number(it.donorCount);
+    if(!Number.isInteger(it.donorInterval)||it.donorInterval<1||!Number.isInteger(it.donorCount)||it.donorCount<0){toast('Interval dan urutan donor harus bilangan bulat valid');return}
+    if(it.donorLast&&(!/^\d{4}-\d{2}-\d{2}$/.test(it.donorLast)||ymd(parse(it.donorLast))!==it.donorLast)){toast('Tanggal donor terakhir tidak valid');return}
+    it.repeat='none';it.date=donorNext(it);
+  }
   if(it.type==='reminder'&&!it.date)it.date=today();
   delete it._day;it.amount=+it.amount||0;it.prio=+it.prio||0;it.remind=+it.remind||0;
   upsert(it);closeSheet();toast('Tersimpan ✓');
@@ -295,6 +330,7 @@ document.addEventListener('click',e=>{
   else if(a==='edit'&&it)openForm({...it})
   else if(a==='ftype'){collect();form.type=el.dataset.type;if(form.type==='bill'&&!form.remind)form.remind=1440;openForm(form)}
   else if(a==='save')save()
+  else if(a==='donorcomplete'&&it)donorComplete(id)
   else if(a==='del'){if(confirm('Hapus item ini?')){remove(form.id);closeSheet()}}
   else if(a==='done'&&it){it.done=!it.done;upsert(it)}
   else if(a==='pin'&&it){it.pinned=!it.pinned;upsert(it)}
@@ -305,6 +341,7 @@ document.addEventListener('click',e=>{
   else if(a==='cfgsave'){cfg={name:$('#c-name').value.trim(),url:$('#c-url').value.trim(),token:$('#c-token').value.trim()};SV('a.cfg',cfg);closeSheet();render();if(ok()){toast('Menyambungkan…');pull().then(()=>{items.forEach(x=>{if(!queue.some(q=>q.id===x.id))queue.push({action:'save',id:x.id,item:x})});persist();flush()})}}
   e.stopPropagation?.();
 });
+document.addEventListener('change',e=>{if(e.target.id==='f-kind'&&form){collect();form.kind=e.target.value;if(form.kind==='donor'){form.title=form.title||'Donor darah';form.repeat='none'}openForm(form)}});
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='cap')capture()});
 function capture(){
   const i=$('#cap'),v=i.value.trim();if(!v)return;
