@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6d5dfc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Asisten Saya</title>
+<link rel="manifest" id="mf">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f2ff;--card:#fff;--tx:#1f1b3a;--mu:#7b7796;--pri:#6d5dfc;--ln:#ece9fb;--sh:0 8px 24px rgba(76,60,180,.08);--idea:#f5a524;--rem:#6d5dfc;--bill:#10b981;--task:#0ea5e9;--bad:#ef4444}
+@media(prefers-color-scheme:dark){:root{--bg:#12101f;--card:#1c1930;--tx:#f1efff;--mu:#9a96b8;--ln:#2a2645;--sh:0 8px 24px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+header{background:linear-gradient(135deg,#6d5dfc,#a45bff 60%,#ff7ab8);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 20px) 0 56px;border-radius:0 0 32px 32px}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.top h1{margin:0;font-size:24px;font-weight:800}
+.top p{margin:4px 0 0;opacity:.85;font-size:13px}
+.ibtn{width:40px;height:40px;border-radius:14px;background:rgba(255,255,255,.2);display:grid;place-items:center;position:relative}
+.dot{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:#bbb;border:2px solid #8a5cff}
+.dot.ok{background:#4ade80}.dot.busy{background:#fbbf24}.dot.err{background:#f87171}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:-34px 0 6px}
+.stat{background:var(--card);border-radius:18px;padding:12px;box-shadow:var(--sh)}
+.stat b{display:block;font-size:22px;font-weight:800}.stat span{font-size:11px;color:var(--mu);font-weight:600}
+.banner{background:rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:12px;margin-top:12px}
+h3.sec{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin:20px 4px 8px;font-weight:700}
+.card{background:var(--card);border-radius:20px;padding:14px;margin-bottom:10px;box-shadow:var(--sh);display:flex;gap:12px;align-items:center;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--c,var(--pri))}
+.card.done{opacity:.55}.card.done .t{text-decoration:line-through}
+.card .body{flex:1;min-width:0}
+.t{font-weight:700;font-size:15px;word-break:break-word}
+.m{font-size:12px;color:var(--mu);margin-top:3px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:color-mix(in srgb,var(--c,var(--pri)) 14%,transparent);color:var(--c,var(--pri))}
+.chip.bad{--c:var(--bad)}.chip.ok{--c:var(--bill)}
+.badge{width:46px;height:50px;border-radius:14px;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);display:grid;place-items:center;text-align:center;line-height:1.05;font-weight:800;font-size:18px;flex:none}
+.badge small{display:block;font-size:10px;font-weight:700;opacity:.8}
+.chk{width:28px;height:28px;border-radius:50%;border:2px solid var(--ln);display:grid;place-items:center;flex:none;color:#fff}
+.chk.on{background:var(--c,var(--bill));border-color:var(--c,var(--bill))}.chk svg{width:16px;height:16px;stroke-width:3}
+.acts{display:flex;gap:4px;margin-top:8px}
+.mini{font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:var(--bg);color:var(--mu);display:inline-flex;gap:4px;align-items:center}
+.mini svg{width:13px;height:13px}.mini.on{color:var(--idea)}
+.cap{display:flex;gap:8px;margin-top:18px;background:var(--card);padding:8px;border-radius:20px;box-shadow:var(--sh)}
+.cap input{flex:1;border:0;background:none;font:inherit;color:var(--tx);padding:8px 10px;outline:0;min-width:0}
+.go{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#6d5dfc,#a45bff);color:#fff;display:grid;place-items:center}
+.sum{background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;border-radius:22px;padding:18px;margin-top:18px;box-shadow:var(--sh)}
+.sum small{opacity:.85;font-weight:600}.sum b{display:block;font-size:26px;font-weight:800;margin:2px 0 10px}
+.bar{height:8px;background:rgba(255,255,255,.3);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#fff;border-radius:9px}
+.empty{text-align:center;color:var(--mu);padding:46px 20px;font-size:14px}.empty div{font-size:40px;margin-bottom:8px}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(528px,calc(100% - 32px));display:grid;grid-template-columns:repeat(4,1fr);background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px;padding:8px;box-shadow:0 10px 30px rgba(60,40,160,.2);z-index:5}
+nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:16px;font-size:11px;font-weight:700;color:var(--mu)}
+nav button.on{color:var(--pri);background:color-mix(in srgb,var(--pri) 12%,transparent)}
+.fab{position:fixed;right:max(20px,calc(50% - 264px));bottom:calc(94px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:20px;background:linear-gradient(135deg,#6d5dfc,#ff7ab8);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(109,93,252,.45);z-index:6}
+.fab svg{width:26px;height:26px;stroke-width:2.5}
+#scrim{position:fixed;inset:0;background:rgba(15,10,40,.45);opacity:0;pointer-events:none;transition:.25s;z-index:20}
+#scrim.open{opacity:1;pointer-events:auto}
+#sheet{position:fixed;left:50%;bottom:0;transform:translate(-50%,105%);width:min(560px,100%);max-height:90vh;overflow:auto;background:var(--card);border-radius:28px 28px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom,0px));transition:.3s cubic-bezier(.2,.8,.2,1);z-index:21}
+#sheet.open{transform:translate(-50%,0)}
+.grab{width:42px;height:5px;border-radius:9px;background:var(--ln);margin:0 auto 14px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--bg);padding:4px;border-radius:16px;margin-bottom:14px}
+.seg button{padding:8px 0;border-radius:12px;font-size:12px;font-weight:700;color:var(--mu)}
+.seg button.on{background:var(--card);color:var(--c);box-shadow:var(--sh)}
+.fl{display:block;margin-bottom:12px}.fl span{display:block;font-size:12px;font-weight:700;color:var(--mu);margin-bottom:5px}
+.fl input,.fl select,.fl textarea{width:100%;font:inherit;color:var(--tx);background:var(--bg);border:2px solid transparent;border-radius:14px;padding:11px 13px;outline:0}
+.fl input:focus,.fl select:focus,.fl textarea:focus{border-color:var(--pri)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btns{display:flex;gap:10px;margin-top:6px}
+.btn{flex:1;padding:14px;border-radius:16px;font-weight:800;background:linear-gradient(135deg,#6d5dfc,#a45bff);color:#fff}
+.btn.sec{background:var(--bg);color:var(--tx);flex:none;padding:14px 18px}.btn.del{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad);flex:none;padding:14px 18px}
+.hint{font-size:12px;color:var(--mu);line-height:1.5;margin:0 0 12px}
+#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translate(-50%,-80px);background:#1f1b3a;color:#fff;padding:10px 16px;border-radius:14px;font-size:13px;font-weight:600;transition:.3s;z-index:40}
+#toast.show{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><div><h1 id="hi"></h1><p id="dt"></p></div><button class="ibtn" data-act="cfg" aria-label="Pengaturan"><i id="ic-cfg"></i><span class="dot" id="dot"></span></button></div>
+  <div id="bn"></div>
+</div></header>
+<main class="wrap">
+  <div class="stats" id="stats"></div>
+  <div id="view"></div>
+</main>
+<button class="fab" data-act="new" aria-label="Tambah"><i id="ic-plus"></i></button>
+<nav id="nav"></nav>
+<div id="scrim" data-act="close"></div>
+<div id="sheet"><div class="grab"></div><div id="sb"></div></div>
+<div id="toast"></div>
+
+<script>
+/* ===== util ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const SV=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today=()=>ymd(new Date());
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const diff=(a,b)=>Math.round((parse(a)-parse(b))/864e5);
+const MON=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const DAY=['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+const fmt=s=>{const d=parse(s);return `${DAY[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}`};
+const rp=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+const clampDay=(y,m,d)=>new Date(y,m,Math.min(d,new Date(y,m+1,0).getDate()));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const P=d=>`<svg viewBox="0 0 24 24">${d}</svg>`;
+const I={
+ idea:P('<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'),
+ rem:P('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>'),
+ bill:P('<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/>'),
+ task:P('<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>'),
+ plus:P('<path d="M12 5v14M5 12h14"/>'),check:P('<path d="M20 6 9 17l-5-5"/>'),
+ pin:P('<path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/>'),
+ cfg:P('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>')
+};
+const TYPES={idea:['Ide','var(--idea)','idea'],reminder:['Pengingat','var(--rem)','rem'],bill:['Tagihan','var(--bill)','bill'],task:['Tugas','var(--task)','task']};
+const REMIND=[[0,'Tepat waktu'],[10,'10 menit sebelum'],[30,'30 menit sebelum'],[60,'1 jam sebelum'],[180,'3 jam sebelum'],[1440,'1 hari sebelum'],[4320,'3 hari sebelum'],[10080,'1 minggu sebelum']];
+
+/* ===== state ===== */
+let items=LS('a.items',[]),cfg=LS('a.cfg',{url:'',token:'',name:''}),queue=LS('a.q',[]),tab='idea',syncState='local',form=null,flushing=false;
+const ok=()=>cfg.url&&cfg.token;
+const find=id=>items.find(x=>x.id===id);
+const persist=()=>{SV('a.items',items);SV('a.q',queue)};
+const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repeat:'none',remind:type==='bill'?1440:30,amount:0,done:false,pinned:false,tag:'',prio:0,paid:'',calId:'',created:new Date().toISOString()});
+const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0});
+
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2200)}
+function setSync(s){syncState=s;$('#dot').className='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'')}
+
+/* ===== sync ===== */
+async function api(body,get){
+  const r=get?await fetch(cfg.url+'?token='+encodeURIComponent(cfg.token))
+    :await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:cfg.token,...body})});
+  const j=await r.json();if(!j.ok)throw new Error(j.error||'Gagal');return j;
+}
+function enqueue(op){queue=queue.filter(o=>o.id!==op.id);queue.push(op);persist();flush()}
+async function flush(){
+  if(flushing||!ok()||!navigator.onLine)return;
+  flushing=true;
+  if(queue.length)setSync('busy');
+  try{
+    while(queue.length){
+      const op=queue[0],j=await api(op);
+      if(op.action==='save'&&j.item){const it=find(op.id);if(it)it.calId=j.item.calId||''}
+      queue.shift();persist();
+    }
+    setSync('ok');
+  }catch(e){setSync('err');console.warn(e)}
+  flushing=false;
+}
+async function pull(){
+  if(!ok())return;
+  await flush();
+  if(queue.length)return;
+  try{setSync('busy');const j=await api({},true);items=j.items.map(norm);persist();setSync('ok');render()}
+  catch(e){setSync('err');toast('Sinkron gagal: '+e.message)}
+}
+
+/* ===== data ops ===== */
+function upsert(it){
+  const i=items.findIndex(x=>x.id===it.id);
+  if(i>=0)items[i]=it;else items.unshift(it);
+  persist();render();enqueue({action:'save',id:it.id,item:it});
+}
+function remove(id){items=items.filter(x=>x.id!==id);persist();render();enqueue({action:'delete',id})}
+function nextOcc(it){
+  if(!it.date)return null;
+  const t=today();
+  if(!it.repeat||it.repeat==='none'||it.date>=t)return it.date;
+  const d=parse(it.date),n=new Date();
+  if(it.repeat==='weekly'){d.setDate(d.getDate()+Math.ceil(diff(t,it.date)/7)*7);return ymd(d)}
+  if(it.repeat==='monthly'){let c=clampDay(n.getFullYear(),n.getMonth(),d.getDate());if(ymd(c)<t)c=clampDay(n.getFullYear(),n.getMonth()+1,d.getDate());return ymd(c)}
+  let c=new Date(n.getFullYear(),d.getMonth(),d.getDate());if(ymd(c)<t)c=new Date(n.getFullYear()+1,d.getMonth(),d.getDate());return ymd(c);
+}
+function billInfo(b){
+  const n=new Date(),day=parse(b.date).getDate();
+  let due=clampDay(n.getFullYear(),n.getMonth(),day);
+  if(ymd(due)<b.date)due=parse(b.date);
+  const key=ymd(due).slice(0,7),paid=(b.paid||'').split(',').includes(key);
+  return{due:ymd(due),key,paid,thisMonth:key===ymd(n).slice(0,7),left:diff(ymd(due),today())};
+}
+
+/* ===== render ===== */
+function render(){
+  const h=new Date().getHours(),g=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam';
+  $('#hi').textContent=`${g}${cfg.name?', '+cfg.name:''} 👋`;
+  const n=new Date();$('#dt').textContent=`${DAY[n.getDay()]}, ${n.getDate()} ${MON[n.getMonth()]} ${n.getFullYear()}`;
+  $('#bn').innerHTML=ok()?'':'<div class="banner">Mode lokal: data hanya di HP ini. Buka ⚙ untuk hubungkan Google Calendar.</div>';
+  const T=today(),R=items.filter(x=>x.type==='reminder'&&!x.done),B=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)}));
+  $('#stats').innerHTML=[[R.filter(x=>nextOcc(x)===T).length,'Agenda hari ini'],[B.filter(x=>x.i.thisMonth&&!x.i.paid).length,'Tagihan belum lunas'],[items.filter(x=>x.type==='task'&&!x.done).length,'Tugas tersisa']].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
+  $('#nav').innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="${tab===k?'on':''}" data-act="tab" data-type="${k}">${I[v[2]]}${v[0]}</button>`).join('');
+  $('#view').innerHTML=({idea:vIdea,reminder:vRem,bill:vBill,task:vTask})[tab]();
+}
+const empty=(e,t)=>`<div class="empty"><div>${e}</div>${t}</div>`;
+const meta=a=>`<div class="m">${a.filter(Boolean).join('')}</div>`;
+
+function vIdea(){
+  const L=items.filter(x=>x.type==='idea').sort((a,b)=>b.pinned-a.pinned||b.created.localeCompare(a.created));
+  return `<div class="cap"><input id="cap" placeholder="Ada ide? Tulis di sini…" enterkeyhint="send"><button class="go" data-act="cap">${I.plus}</button></div>`+
+  (L.length?L.map(x=>`<div class="card" style="--c:var(--idea)" data-act="edit" data-id="${x.id}"><div class="body"><div class="t">${esc(x.title)}</div>
+   ${meta([x.tag?`<span class="chip">#${esc(x.tag)}</span>`:'',`<span>${fmt(x.created.slice(0,10))}</span>`])}
+   <div class="acts"><button class="mini ${x.pinned?'on':''}" data-act="pin" data-id="${x.id}">${I.pin}${x.pinned?'Disematkan':'Sematkan'}</button><button class="mini" data-act="conv" data-type="task" data-id="${x.id}">→ Tugas</button><button class="mini" data-act="conv" data-type="reminder" data-id="${x.id}">→ Pengingat</button></div></div></div>`).join(''):empty('💡','Belum ada ide.<br>Tulis yang terlintas, nanti bisa dijadikan tugas.'));
+}
+function remCard(x){
+  const o=nextOcc(x),d=parse(o),late=!x.done&&o<today()&&x.repeat==='none';
+  const rep={weekly:'Tiap minggu',monthly:'Tiap bulan',yearly:'Tiap tahun'}[x.repeat];
+  return `<div class="card ${x.done?'done':''}" style="--c:${late?'var(--bad)':'var(--rem)'}" data-act="edit" data-id="${x.id}">
+   <div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
+   <div class="body"><div class="t">${esc(x.title)}</div>${meta([`<span>${x.time||'09:00'}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',rep?`<span class="chip">${rep}</span>`:'',late?'<span class="chip bad">Terlewat</span>':''])}</div>
+   ${x.repeat==='none'?`<button class="chk ${x.done?'on':''}" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>`:''}</div>`;
+}
+function vRem(){
+  const L=items.filter(x=>x.type==='reminder'),A=L.filter(x=>!x.done).sort((a,b)=>(nextOcc(a)+(a.time||'09:00')).localeCompare(nextOcc(b)+(b.time||'09:00'))),D=L.filter(x=>x.done);
+  const gr={};A.forEach(x=>{const d=diff(nextOcc(x),today());const k=d<0?'Terlewat':d===0?'Hari ini':d===1?'Besok':d<=7?'Minggu ini':'Mendatang';(gr[k]=gr[k]||[]).push(x)});
+  let h=['Terlewat','Hari ini','Besok','Minggu ini','Mendatang'].filter(k=>gr[k]).map(k=>`<h3 class="sec">${k}</h3>`+gr[k].map(remCard).join('')).join('');
+  if(D.length)h+=`<h3 class="sec">Selesai (${D.length})</h3>`+D.map(remCard).join('');
+  return h||empty('🔔','Belum ada pengingat.<br>Tekan + untuk menambah rapat atau acara.');
+}
+function vBill(){
+  const L=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)})).sort((a,b)=>a.i.due.localeCompare(b.i.due));
+  const M=L.filter(x=>x.i.thisMonth),tot=M.reduce((s,x)=>s+x.b.amount,0),pd=M.filter(x=>x.i.paid).reduce((s,x)=>s+x.b.amount,0);
+  const sum=L.length?`<div class="sum"><small>Total tagihan bulan ini</small><b>${rp(tot)}</b><div class="bar"><i style="width:${tot?pd/tot*100:0}%"></i></div><small style="display:block;margin-top:8px">Lunas ${rp(pd)} · Sisa ${rp(tot-pd)}</small></div>`:'';
+  return sum+(L.length?L.map(({b,i})=>{
+    const d=parse(i.due),late=!i.paid&&i.left<0;
+    const st=i.paid?'<span class="chip ok">Lunas ✓</span>':late?`<span class="chip bad">Terlambat ${-i.left} hari</span>`:i.left===0?'<span class="chip bad">Jatuh tempo hari ini</span>':`<span class="chip">${i.left<=7?i.left+' hari lagi':'Tgl '+d.getDate()}</span>`;
+    return `<div class="card ${i.paid?'done':''}" style="--c:${late?'var(--bad)':'var(--bill)'}" data-act="edit" data-id="${b.id}"><div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
+     <div class="body"><div class="t">${esc(b.title)}</div>${meta([`<b>${rp(b.amount)}</b>`,st])}</div>
+     <button class="chk ${i.paid?'on':''}" data-act="paid" data-id="${b.id}">${i.paid?I.check:''}</button></div>`}).join(''):empty('💸','Belum ada tagihan.<br>Tambahkan listrik, internet, UKT, cicilan, dll.'));
+}
+function vTask(){
+  const L=items.filter(x=>x.type==='task'),A=L.filter(x=>!x.done).sort((a,b)=>b.prio-a.prio||(a.date||'9').localeCompare(b.date||'9')),D=L.filter(x=>x.done);
+  const card=x=>`<div class="card ${x.done?'done':''}" style="--c:${x.prio?'var(--bad)':'var(--task)'}" data-act="edit" data-id="${x.id}">
+   <button class="chk ${x.done?'on':''}" style="--c:var(--task)" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>
+   <div class="body"><div class="t">${esc(x.title)}</div>${meta([x.prio?'<span class="chip bad">Penting</span>':'',x.date?`<span>${fmt(x.date)}${x.time?' · '+x.time:''}</span>`:''])}</div></div>`;
+  return (A.length?A.map(card).join(''):empty('✅','Semua beres!<br>Tidak ada tugas tersisa.'))+(D.length?`<h3 class="sec">Selesai (${D.length})</h3>`+D.map(card).join(''):'');
+}
+
+/* ===== form ===== */
+const opt=(list,v)=>list.map(([a,b])=>`<option value="${a}" ${String(a)===String(v)?'selected':''}>${b}</option>`).join('');
+const fl=(l,h)=>`<label class="fl"><span>${l}</span>${h}</label>`;
+function openSheet(h){$('#sb').innerHTML=h;$('#scrim').classList.add('open');$('#sheet').classList.add('open')}
+function closeSheet(){$('#scrim').classList.remove('open');$('#sheet').classList.remove('open')}
+function openForm(it){
+  form=it;const t=it.type,isNew=!find(it.id);
+  const seg=`<div class="seg">${Object.entries(TYPES).map(([k,v])=>`<button class="${t===k?'on':''}" style="--c:${v[1]}" data-act="ftype" data-type="${k}">${v[0]}</button>`).join('')}</div>`;
+  let f=fl(t==='idea'?'Ide':'Judul',t==='idea'?`<textarea id="f-title" rows="3" placeholder="Tulis ide…">${esc(it.title)}</textarea>`:`<input id="f-title" value="${esc(it.title)}" placeholder="${t==='bill'?'mis. Listrik PLN':t==='reminder'?'mis. Rapat jurusan':'mis. Kirim laporan'}">`);
+  if(t==='idea')f+=fl('Tag (opsional)',`<input id="f-tag" value="${esc(it.tag)}" placeholder="mis. proyek">`);
+  if(t==='reminder')f+=`<div class="row">${fl('Tanggal',`<input id="f-date" type="date" value="${it.date||today()}">`)}${fl('Jam',`<input id="f-time" type="time" value="${it.time||'09:00'}">`)}</div>`+fl('Lokasi',`<input id="f-place" value="${esc(it.place)}" placeholder="Opsional">`)+fl('Ulangi',`<select id="f-repeat">${opt([['none','Tidak berulang'],['weekly','Tiap minggu'],['monthly','Tiap bulan'],['yearly','Tiap tahun']],it.repeat)}</select>`);
+  if(t==='bill')f+=`<div class="row">${fl('Nominal (Rp)',`<input id="f-amount" type="number" inputmode="numeric" value="${it.amount||''}">`)}${fl('Jatuh tempo tgl',`<input id="f-day" type="number" min="1" max="31" value="${it.date?parse(it.date).getDate():''}" placeholder="1-31">`)}</div>`;
+  if(t==='task')f+=fl('Prioritas',`<select id="f-prio">${opt([[0,'Biasa'],[1,'Penting']],it.prio)}</select>`)+`<div class="row">${fl('Tanggal (opsional)',`<input id="f-date" type="date" value="${it.date}">`)}${fl('Jam',`<input id="f-time" type="time" value="${it.time}">`)}</div>`;
+  if(t!=='idea')f+=fl('Ingatkan lewat Google Calendar',`<select id="f-remind">${opt(REMIND,it.remind)}</select>`)+fl('Catatan',`<textarea id="f-note" rows="2">${esc(it.note)}</textarea>`);
+  openSheet(`${seg}${f}<div class="btns">${isNew?'':'<button class="btn del" data-act="del">Hapus</button>'}<button class="btn" data-act="save" style="background:linear-gradient(135deg,#6d5dfc,#a45bff)">Simpan</button></div>`);
+}
+function collect(){
+  const g=id=>{const e=$('#'+id);return e?e.value:undefined};
+  const m={title:g('f-title'),tag:g('f-tag'),date:g('f-date'),time:g('f-time'),place:g('f-place'),repeat:g('f-repeat'),amount:g('f-amount'),prio:g('f-prio'),remind:g('f-remind'),note:g('f-note')};
+  Object.keys(m).forEach(k=>{if(m[k]!==undefined)form[k]=m[k]});
+  const day=g('f-day');if(day!==undefined)form._day=day;
+}
+function save(){
+  collect();const it=form;it.title=it.title.trim();
+  if(!it.title){toast('Judul masih kosong');return}
+  if(it.type==='bill'){
+    const day=Math.min(31,Math.max(1,parseInt(it._day)||0));
+    if(!parseInt(it._day)){toast('Isi tanggal jatuh tempo (1-31)');return}
+    const n=new Date();let d=clampDay(n.getFullYear(),n.getMonth(),day);
+    if(!(it.date&&parse(it.date).getDate()===day)){if(ymd(d)<today())d=clampDay(n.getFullYear(),n.getMonth()+1,day);it.date=ymd(d)}
+    it.repeat='monthly';if(!it.time)it.time='09:00';
+  }
+  if(it.type==='idea'){it.date='';it.repeat='none'}
+  if(it.type==='task'){it.repeat='none'}
+  if(it.type==='reminder'&&!it.date)it.date=today();
+  delete it._day;it.amount=+it.amount||0;it.prio=+it.prio||0;it.remind=+it.remind||0;
+  upsert(it);closeSheet();toast('Tersimpan ✓');
+}
+function openCfg(){
+  openSheet(`<p class="hint"><b>Hubungkan ke Google Calendar.</b> Tempel URL web app Apps Script (berakhiran /exec) dan token yang sama dengan di Code.gs.</p>
+  ${fl('Nama panggilan',`<input id="c-name" value="${esc(cfg.name)}">`)}${fl('URL Apps Script',`<input id="c-url" value="${esc(cfg.url)}" placeholder="https://script.google.com/macros/s/…/exec">`)}${fl('Token',`<input id="c-token" type="password" value="${esc(cfg.token)}">`)}
+  <div class="btns"><button class="btn sec" data-act="close">Batal</button><button class="btn" data-act="cfgsave">Simpan & Sinkron</button></div>`);
+}
+
+/* ===== events ===== */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act,id=el.dataset.id,it=id?find(id):null;
+  if(a==='tab'){tab=el.dataset.type;render();scrollTo(0,0)}
+  else if(a==='new')openForm(blank(tab))
+  else if(a==='close')closeSheet()
+  else if(a==='edit'&&it)openForm({...it})
+  else if(a==='ftype'){collect();form.type=el.dataset.type;if(form.type==='bill'&&!form.remind)form.remind=1440;openForm(form)}
+  else if(a==='save')save()
+  else if(a==='del'){if(confirm('Hapus item ini?')){remove(form.id);closeSheet()}}
+  else if(a==='done'&&it){it.done=!it.done;upsert(it)}
+  else if(a==='pin'&&it){it.pinned=!it.pinned;upsert(it)}
+  else if(a==='paid'&&it){const k=billInfo(it).key,s=new Set((it.paid||'').split(',').filter(Boolean));s.has(k)?s.delete(k):s.add(k);it.paid=[...s].join(',');upsert(it)}
+  else if(a==='conv'&&it){openForm({...it,type:el.dataset.type,date:el.dataset.type==='reminder'?today():'',remind:30})}
+  else if(a==='cap')capture()
+  else if(a==='cfg')openCfg()
+  else if(a==='cfgsave'){cfg={name:$('#c-name').value.trim(),url:$('#c-url').value.trim(),token:$('#c-token').value.trim()};SV('a.cfg',cfg);closeSheet();render();if(ok()){toast('Menyambungkan…');pull().then(()=>{items.forEach(x=>{if(!queue.some(q=>q.id===x.id))queue.push({action:'save',id:x.id,item:x})});persist();flush()})}}
+  e.stopPropagation?.();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='cap')capture()});
+function capture(){
+  const i=$('#cap'),v=i.value.trim();if(!v)return;
+  upsert({...blank('idea'),title:v});toast('Ide tersimpan 💡');setTimeout(()=>$('#cap')?.focus(),50);
+}
+window.addEventListener('online',flush);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+
+/* ===== init ===== */
+$('#ic-cfg').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;
+$('#mf').href=URL.createObjectURL(new Blob([JSON.stringify({name:'Asisten Saya',short_name:'Asisten',start_url:'./',display:'standalone',background_color:'#f4f2ff',theme_color:'#6d5dfc',icons:[{src:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d5dfc"/><stop offset="1" stop-color="#ff7ab8"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="url(#g)"/><path d="M30 52l14 14 26-30" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>'),sizes:'any',type:'image/svg+xml',purpose:'any'}]})],{type:'application/manifest+json'}));
+items=items.map(norm);render();setSync(ok()?'busy':'local');pull();
+</script>
+</body>
+</html>
