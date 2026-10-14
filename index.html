@@ -80,12 +80,21 @@ nav button{position:relative}.pending-label{display:inline-flex;align-items:cent
 .hint{font-size:12px;color:var(--mu);line-height:1.5;margin:0 0 12px}
 .shopcard{display:block;cursor:default}.shoprow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--ln)}.shoprow:last-child{border-bottom:0}.shoprow .body{flex:1;min-width:0}.shoprow input[type=checkbox]{width:22px;height:22px;accent-color:var(--bill)}.shoptools{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}.shoptools button{padding:9px 11px;background:var(--bg);border-radius:11px;font-size:12px;font-weight:700}.shopselect{width:100%;padding:11px;color:var(--tx);background:var(--card);border:1px solid var(--ln);border-radius:12px}.shoptitle{display:flex;justify-content:space-between;align-items:center;gap:8px}.shopstats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.shopstats>div{background:var(--card);border-radius:16px;padding:13px;box-shadow:var(--sh)}.shopstats b{font-size:18px;display:block}.shopstats small{color:var(--mu)}.shopline{height:8px;border-radius:10px;background:var(--ln);overflow:hidden;margin:10px 0}.shopline i{display:block;background:var(--bill);height:100%;border-radius:10px}#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translate(-50%,-80px);background:#1f1b3a;color:#fff;padding:10px 16px;border-radius:14px;font-size:13px;font-weight:600;transition:.3s;z-index:40}
 #toast.show{transform:translate(-50%,0)}
+
+/* v2.4 */
+:root{--mu:#6b6788}
+@media(prefers-color-scheme:dark){:root{--mu:#9a96b8}}
+.mini{min-height:34px;font-size:12px;padding:7px 12px}
+.syncline{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.18);cursor:pointer}
+nav{grid-template-columns:repeat(6,1fr);padding:6px}
+nav button{font-size:10px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <header><div class="wrap">
   <div class="top"><div><h1 id="hi"></h1><p id="dt"></p></div><button class="ibtn" data-act="cfg" aria-label="Pengaturan"><i id="ic-cfg"></i><span class="dot" id="dot"></span></button></div>
-  <div id="bn"></div>
+  <div class="syncline" id="synctxt" data-act="syncnow" role="button" tabindex="0"></div><div id="bn"></div>
 </div></header>
 <main class="wrap">
   <div class="stats" id="stats"></div>
@@ -98,6 +107,7 @@ nav button{position:relative}.pending-label{display:inline-flex;align-items:cent
 <div id="toast"></div>
 
 <script>
+const APP_VERSION='2.4.0';
 /* ===== util ===== */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -120,55 +130,65 @@ const I={
  rem:P('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/>'),
  bill:P('<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/>'),
  task:P('<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>'),
- plus:P('<path d="M12 5v14M5 12h14"/>'),check:P('<path d="M20 6 9 17l-5-5"/>'),
+ cart:P('<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.4 11h11l2-8H6.5"/>'),today:P('<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/>'),plus:P('<path d="M12 5v14M5 12h14"/>'),check:P('<path d="M20 6 9 17l-5-5"/>'),
  pin:P('<path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/>'),
  cfg:P('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>')
 };
-const TYPES={idea:['Ide','var(--idea)','idea'],reminder:['Pengingat','var(--rem)','rem'],bill:['Tagihan','var(--bill)','bill'],task:['Tugas','var(--task)','task'],shopping:['Rutinitas','var(--bill)','bill']};
+const TYPES={idea:['Ide','var(--idea)','idea'],reminder:['Pengingat','var(--rem)','rem'],bill:['Tagihan','var(--bill)','bill'],task:['Tugas','var(--task)','task'],shopping:['Rutinitas','var(--bill)','cart']};
 const REMIND=[[0,'Tepat waktu'],[10,'10 menit sebelum'],[30,'30 menit sebelum'],[60,'1 jam sebelum'],[180,'3 jam sebelum'],[1440,'1 hari sebelum'],[4320,'3 hari sebelum'],[10080,'1 minggu sebelum']];
 
 /* ===== state ===== */
-let items=LS('a.items',[]),cfg=LS('a.cfg',{url:'',token:'',name:''}),queue=LS('a.q',[]),tab='idea',syncState='local',form=null,flushing=false;
+let items=LS('a.items',[]),cfg=LS('a.cfg',{url:'',token:'',name:''}),queue=LS('a.q',[]),tab='today',syncState='local',form=null,flushing=false;
 const ok=()=>cfg.url&&cfg.token;
 const find=id=>items.find(x=>x.id===id);
 const persist=()=>{SV('a.items',items);SV('a.q',queue)};
 const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repeat:'none',remind:type==='bill'?1440:30,amount:0,done:false,pinned:false,tag:'',prio:0,paid:'',calId:'',created:new Date().toISOString(),kind:'normal',donorLast:'',donorCount:0,donorInterval:70,donorUnit:'days',donorHistory:[],status:'open',pendingMonths:'',history:[],snoozeUntil:''});
 const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0,donorCount:+o.donorCount||0,donorInterval:+o.donorInterval||70,donorHistory:Array.isArray(o.donorHistory)?o.donorHistory:[],status:(['open','pending','done'].includes(o.status)?o.status:'open'),pendingMonths:String(o.pendingMonths||''),history:Array.isArray(o.history)?o.history:[],snoozeUntil:o.snoozeUntil||''});
 
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2200)}
-function setSync(s){syncState=s;$('#dot').className='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'')}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3200)}
+function setSync(s){syncState=s;$('#dot').className='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'');updSyncTxt()}
 
 /* ===== sync ===== */
 async function api(body,get){
   const r=get?await fetch(cfg.url+'?token='+encodeURIComponent(cfg.token))
     :await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:cfg.token,...body})});
-  const j=await r.json();if(!j.ok)throw new Error(j.error||'Gagal');return j;
+  const j=await r.json();if(!j.ok){const er=new Error(j.error||'Gagal');er.server=true;throw er}return j;
 }
 function enqueue(op){queue=queue.filter(o=>o.id!==op.id);queue.push(op);persist();flush()}
+const dropable=e=>e&&e.server&&!/token|aksi tidak dikenal|lock|timeout|server error/i.test(String(e.message));
+function rejectOp(op,e){const f=LS('a.failed',[]);f.push({at:new Date().toISOString(),action:op.action,id:op.id,error:String(e.message||e)});SV('a.failed',f.slice(-30));toast('1 perubahan ditolak server dan dilewati: '+(e.message||''))}
+let lastSyncAt=LS('a.lastsync','');
+function markSynced(){lastSyncAt=new Date().toISOString();SV('a.lastsync',lastSyncAt);updSyncTxt()}
+function updSyncTxt(){try{const el=$('#synctxt');if(!el)return;const q=queue.length+shopDirty.length+vehicleDirty.length;el.textContent=!ok()?'Mode lokal · ketuk ⚙ untuk menyambungkan':syncState==='err'?'Gagal sinkron · ketuk untuk coba lagi':syncState==='busy'?'Menyinkronkan…':q?q+' perubahan menunggu · ketuk untuk kirim':'Tersinkron'+(lastSyncAt?' '+new Date(lastSyncAt).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'')}catch(e){}}
 async function flush(){
   if(flushing||!ok()||!navigator.onLine)return;
   flushing=true;
   if(queue.length)setSync('busy');
   try{
     while(queue.length){
-      const op=queue[0],j=await api(op);
+      const op=queue[0];let j;
+      try{j=await api(op)}catch(e){if(dropable(e)){rejectOp(op,e);queue.shift();persist();continue}throw e}
       if(op.action==='save'&&j.item){const it=find(op.id);if(it)it.calId=j.item.calId||''}
       queue.shift();persist();
     }
-    setSync('ok');
+    setSync('ok');markSynced();
   }catch(e){setSync('err');console.warn(e)}
   flushing=false;
 }
-async function pull(){
+let lastPull=0,pendingRemote=null;
+function askSync(n,m){openSheet(`<h3>Data belum sama</h3><p class="hint">Ada <b>${n}</b> item di HP ini yang tidak ada di server (server berisi ${m} item). Pilih tindakan:</p><div class="btns"><button class="btn" data-act="pushlocal">Gabungkan: kirim ke server</button></div><div class="btns"><button class="btn del" data-act="takeremote">Pakai data server (hapus ${n} item lokal)</button></div><div class="btns"><button class="btn sec" data-act="backup">⬇ Backup dulu</button><button class="btn sec" data-act="close">Nanti</button></div>`)}
+async function pull(force){
   if(!ok())return;
+  if(!force&&Date.now()-lastPull<45000)return;
+  lastPull=Date.now();
   await flush();
   if(queue.length)return;
-  try{setSync('busy');const j=await api({},true);if(Array.isArray(j.shopping))shopApplyRemote(j.shopping);if(Array.isArray(j.vehicles))vehicleApplyRemote(j.vehicles);const remote=(Array.isArray(j.items)?j.items:[]).map(norm);const rids=new Set(remote.map(x=>x.id));const localOnly=items.filter(x=>!rids.has(x.id));if(localOnly.length){setSync('err');toast('Ada data lokal berbeda. Backup dahulu; data belum ditimpa.');return}items=remote;persist();setSync('ok');render()}
+  try{setSync('busy');const j=await api({},true);if(Array.isArray(j.shopping))shopApplyRemote(j.shopping);if(Array.isArray(j.vehicles))vehicleApplyRemote(j.vehicles);const remote=(Array.isArray(j.items)?j.items:[]).map(norm);const rids=new Set(remote.map(x=>x.id));const localOnly=items.filter(x=>!rids.has(x.id));if(localOnly.length){setSync('err');pendingRemote=remote;askSync(localOnly.length,remote.length);return}items=remote;persist();setSync('ok');markSynced();render()}
   catch(e){setSync('err');toast('Sinkron gagal: '+e.message)}
 }
 
 /* ===== data ops ===== */
-function logAction(it, action, extra={}){it.history=Array.isArray(it.history)?it.history:[];it.history.push({at:new Date().toISOString(),action,...extra});if(it.history.length>200)it.history=it.history.slice(-200)}
+function logAction(it, action, extra={}){it.history=Array.isArray(it.history)?it.history:[];it.history.push({at:new Date().toISOString(),action,...extra});if(it.history.length>50)it.history=it.history.slice(-50)}
 function upsert(it){
   const i=items.findIndex(x=>x.id===it.id);
   if(i>=0)items[i]=it;else items.unshift(it);
@@ -183,15 +203,14 @@ function addDonorInterval(date,value,unit){
 function donorNext(it){return it.donorLast?addDonorInterval(it.donorLast,it.donorInterval,it.donorUnit):it.date||today()}
 function donorComplete(id){
   const it=find(id);if(!it||it.kind!=='donor')return;
-  const actual=prompt('Tanggal donor yang telah dilakukan (YYYY-MM-DD):',today());
-  if(actual===null)return;
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(actual)||ymd(parse(actual))!==actual||actual>today()){toast('Tanggal donor tidak valid');return}
   const lastNumber=Math.max(0,+it.donorCount||0)+1;
-  if(!confirm('Catat donor ke-'+lastNumber+' pada '+fmt(actual)+'?'))return;
-  it.donorHistory=Array.isArray(it.donorHistory)?it.donorHistory:[];
-  it.donorHistory.push({date:actual,number:lastNumber,place:it.place||''});logAction(it,'Donor ke-'+lastNumber,{date:actual,place:it.place||''});
-  it.donorCount=lastNumber;it.donorLast=actual;it.date=donorNext(it);it.done=false;it.status='open';
-  upsert(it);toast('Donor ke-'+lastNumber+' tercatat ✓');
+  askSheet('Catat donor ke-'+lastNumber,'date',today(),'Tanggal donor yang telah dilakukan',actual=>{
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(actual)||ymd(parse(actual))!==actual||actual>today()){toast('Tanggal donor tidak valid');return}
+    it.donorHistory=Array.isArray(it.donorHistory)?it.donorHistory:[];
+    it.donorHistory.push({date:actual,number:lastNumber,place:it.place||''});logAction(it,'Donor ke-'+lastNumber,{date:actual,place:it.place||''});
+    it.donorCount=lastNumber;it.donorLast=actual;it.date=donorNext(it);it.done=false;it.status='open';
+    upsert(it);toast('Donor ke-'+lastNumber+' tercatat ✓');
+  });
 }
 function nextOcc(it){
   if(it.type==='reminder'&&it.kind==='donor')return donorNext(it);
@@ -243,16 +262,32 @@ function render(){
   const T=today(),R=items.filter(x=>x.type==='reminder'&&!x.done),B=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)}));
   $('#stats').innerHTML=[[R.filter(x=>nextOcc(x)===T).length,'Agenda hari ini'],[B.filter(x=>x.i.thisMonth&&!x.i.paid).length,'Tagihan belum lunas'],[items.filter(x=>x.type==='task'&&!x.done).length,'Tugas tersisa']].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
   const badges=attentionCounts();badges.shopping=shopAttention()+vehicleAttention();
-  $('#nav').innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="${tab===k?'on':''}" data-act="tab" data-type="${k}">${I[v[2]]}${v[0]}${badges[k]?`<span class="navbadge">${badges[k]>99?'99+':badges[k]}</span>`:''}</button>`).join('');
-  $('#view').innerHTML=({idea:vIdea,reminder:vRem,bill:vBill,task:vTask,shopping:vRoutine})[tab]();
+  $('#nav').innerHTML=[['today',['Hari ini',0,'today']],...Object.entries(TYPES)].map(([k,v])=>`<button class="${tab===k?'on':''}" data-act="tab" data-type="${k}">${I[v[2]]}${v[0]}${badges[k]?`<span class="navbadge">${badges[k]>99?'99+':badges[k]}</span>`:''}</button>`).join('');
+  $('#view').innerHTML=({today:vToday,idea:vIdea,reminder:vRem,bill:vBill,task:vTask,shopping:vRoutine})[tab]();
   const count=Object.values(badges).reduce((a,b)=>a+b,0);$('#bn').innerHTML+=(count?`<div class="notice"><span>🔴 <b>${count} perhatian</b> · Item belum terlaksana atau sudah jatuh tempo</span><button class="mini" data-act="attn">Lihat</button></div>`:'');
 }
 const empty=(e,t)=>`<div class="empty"><div>${e}</div>${t}</div>`;
 const meta=a=>`<div class="m">${a.filter(Boolean).join('')}</div>`;
 
+function dueOf(x){return x.type==='bill'?billInfo(x).due:x.type==='reminder'?nextOcc(x):x.type==='task'?x.date:null}
+function vToday(){
+  const T=today(),att=items.filter(needsAttention),attIds=new Set(att.map(x=>x.id));
+  const act=items.filter(x=>x.type!=='idea'&&!x.done&&x.status!=='done'&&!(x.type==='bill'&&billInfo(x).paid));
+  const rows=(list,cls)=>list.map(x=>{const d=dueOf(x),dt=d?parse(d):null;
+    return `<div class="card" style="--c:${cls||TYPES[x.type][1]}" data-act="edit" data-id="${x.id}">${dt?`<div class="badge">${dt.getDate()}<small>${MON[dt.getMonth()]}</small></div>`:`<div class="badge">${I.idea}</div>`}<div class="body"><div class="t">${esc(x.title)}</div>${meta([`<span class="chip">${TYPES[x.type][0]}</span>`,x.time&&x.type!=='idea'?`<span>${x.time}</span>`:'',x.type==='bill'&&x.amount?`<b>${rp(x.amount)}</b>`:'',statusChip(x)])}</div></div>`}).join('');
+  const todayL=act.filter(x=>!attIds.has(x.id)&&dueOf(x)===T).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+  const soon=act.filter(x=>{const d=dueOf(x);if(!d||attIds.has(x.id))return false;const k=diff(d,T);return k>0&&k<=7}).sort((a,b)=>dueOf(a).localeCompare(dueOf(b)));
+  const extra=shopAttention()+vehicleAttention();
+  let h='';
+  if(att.length)h+=`<h3 class="sec">Perlu perhatian (${att.length})</h3>`+rows(att,'var(--bad)');
+  if(extra)h+=`<div class="card" style="--c:var(--bad)" data-act="tab" data-type="shopping"><div class="badge">🛒</div><div class="body"><div class="t">Rutinitas perlu perhatian</div>${meta([`<span>${extra} item belanja / servis</span>`])}</div><span>›</span></div>`;
+  if(todayL.length)h+=`<h3 class="sec">Hari ini (${todayL.length})</h3>`+rows(todayL);
+  if(soon.length)h+=`<h3 class="sec">7 hari ke depan</h3>`+rows(soon);
+  return h||empty('🎉','Tidak ada yang mendesak hari ini.<br>Tekan + untuk menambah.');
+}
 function vIdea(){
   const L=items.filter(x=>x.type==='idea').sort((a,b)=>b.pinned-a.pinned||b.created.localeCompare(a.created));
-  return `<div class="cap"><input id="cap" placeholder="Ada ide? Tulis di sini…" enterkeyhint="send"><button class="go" data-act="cap">${I.plus}</button></div>`+
+  return `<div class="cap"><input id="cap" placeholder="Ada ide? Tulis di sini…" enterkeyhint="send"><button class="go" data-act="cap" aria-label="Simpan ide">${I.plus}</button></div>`+
   (L.length?L.map(x=>`<div class="card" style="--c:var(--idea)" data-act="edit" data-id="${x.id}"><div class="body"><div class="t">${esc(x.title)}</div>
    ${meta([x.tag?`<span class="chip">#${esc(x.tag)}</span>`:'',statusChip(x),`<span>${fmt(x.created.slice(0,10))}</span>`])}
    <div class="acts">${statusBtn(x)}${snoozeBtn(x)}<button class="mini ${x.pinned?'on':''}" data-act="pin" data-id="${x.id}">${I.pin}${x.pinned?'Disematkan':'Sematkan'}</button><button class="mini" data-act="conv" data-type="task" data-id="${x.id}">→ Tugas</button><button class="mini" data-act="conv" data-type="reminder" data-id="${x.id}">→ Pengingat</button></div></div></div>`).join(''):empty('💡','Belum ada ide.<br>Tulis yang terlintas, nanti bisa dijadikan tugas.'));
@@ -269,7 +304,7 @@ function remCard(x){
   return `<div class="card ${x.done?'done':''}" style="--c:${late?'var(--bad)':'var(--rem)'}" data-act="edit" data-id="${x.id}">
    <div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
    <div class="body"><div class="t">${esc(x.title)}</div>${meta([`<span>${x.time||'09:00'}</span>`,x.place?`<span>📍 ${esc(x.place)}</span>`:'',rep?`<span class="chip">${rep}</span>`:'',late?'<span class="chip bad">Terlewat</span>':'',statusChip(x)])}<div class="acts">${statusBtn(x)}${snoozeBtn(x)}</div></div>
-   ${x.repeat==='none'?`<button class="chk ${x.done?'on':''}" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>`:''}</div>`;
+   ${x.repeat==='none'?`<button class="chk ${x.done?'on':''}" aria-pressed="${!!x.done}" aria-label="Tandai selesai" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>`:''}</div>`;
 }
 function vRem(){
   const L=items.filter(x=>x.type==='reminder'),A=L.filter(x=>!x.done).sort((a,b)=>(nextOcc(a)+(a.time||'09:00')).localeCompare(nextOcc(b)+(b.time||'09:00'))),D=L.filter(x=>x.done);
@@ -287,12 +322,12 @@ function vBill(){
     const st=i.paid?'<span class="chip ok">Lunas ✓</span>':late?`<span class="chip bad">Terlambat ${-i.left} hari</span>`:i.left===0?'<span class="chip bad">Jatuh tempo hari ini</span>':`<span class="chip">${i.left<=7?i.left+' hari lagi':'Tgl '+d.getDate()}</span>`;
     return `<div class="card ${i.paid?'done':''}" style="--c:${late?'var(--bad)':'var(--bill)'}" data-act="edit" data-id="${b.id}"><div class="badge">${d.getDate()}<small>${MON[d.getMonth()]}</small></div>
      <div class="body"><div class="t">${esc(b.title)}</div>${meta([`<b>${rp(b.amount)}</b>`,st,i.pending?'<span class="chip bad">Belum terlaksana</span>':''])}<div class="acts"><button class="mini ${i.pending?'pending':''}" data-act="billpending" data-id="${b.id}">${i.pending?'↩ Aktif':'⏳ Belum terlaksana'}</button>${snoozeBtn(b)}</div></div>
-     <button class="chk ${i.paid?'on':''}" data-act="paid" data-id="${b.id}">${i.paid?I.check:''}</button></div>`}).join(''):empty('💸','Belum ada tagihan.<br>Tambahkan listrik, internet, UKT, cicilan, dll.'));
+     <button class="chk ${i.paid?'on':''}" aria-pressed="${!!i.paid}" aria-label="Tandai lunas" data-act="paid" data-id="${b.id}">${i.paid?I.check:''}</button></div>`}).join(''):empty('💸','Belum ada tagihan.<br>Tambahkan listrik, internet, UKT, cicilan, dll.'));
 }
 function vTask(){
   const L=items.filter(x=>x.type==='task'),A=L.filter(x=>!x.done).sort((a,b)=>b.prio-a.prio||(a.date||'9').localeCompare(b.date||'9')),D=L.filter(x=>x.done);
   const card=x=>`<div class="card ${x.done?'done':''}" style="--c:${x.prio?'var(--bad)':'var(--task)'}" data-act="edit" data-id="${x.id}">
-   <button class="chk ${x.done?'on':''}" style="--c:var(--task)" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>
+   <button class="chk ${x.done?'on':''}" aria-pressed="${!!x.done}" aria-label="Tandai selesai" style="--c:var(--task)" data-act="done" data-id="${x.id}">${x.done?I.check:''}</button>
    <div class="body"><div class="t">${esc(x.title)}</div>${meta([x.prio?'<span class="chip bad">Penting</span>':'',x.date?`<span>${fmt(x.date)}${x.time?' · '+x.time:''}</span>`:'',statusChip(x)])}<div class="acts">${statusBtn(x)}${snoozeBtn(x)}</div></div></div>`;
   return (A.length?A.map(card).join(''):empty('✅','Semua beres!<br>Tidak ada tugas tersisa.'))+(D.length?`<h3 class="sec">Selesai (${D.length})</h3>`+D.map(card).join(''):'');
 }
@@ -300,8 +335,12 @@ function vTask(){
 /* ===== form ===== */
 const opt=(list,v)=>list.map(([a,b])=>`<option value="${a}" ${String(a)===String(v)?'selected':''}>${b}</option>`).join('');
 const fl=(l,h)=>`<label class="fl"><span>${l}</span>${h}</label>`;
-function openSheet(h){$('#sb').innerHTML=h;$('#scrim').classList.add('open');$('#sheet').classList.add('open')}
-function closeSheet(){$('#scrim').classList.remove('open');$('#sheet').classList.remove('open')}
+let sheetPushed=false,popIgnore=0,askCb=null;
+function openSheet(h){$('#sb').innerHTML=h;$('#scrim').classList.add('open');$('#sheet').classList.add('open');if(!sheetPushed&&popIgnore===0){try{history.pushState({sheet:1},'');sheetPushed=true}catch(e){}}}
+function hideSheet(){$('#scrim').classList.remove('open');$('#sheet').classList.remove('open')}
+function closeSheet(){hideSheet();if(sheetPushed){sheetPushed=false;popIgnore++;try{history.back()}catch(e){popIgnore--}}}
+window.addEventListener('popstate',()=>{if(popIgnore>0){popIgnore--;return}if(sheetPushed){sheetPushed=false;hideSheet()}});
+function askSheet(title,type,val,hint,cb){askCb=cb;openSheet(`<h3>${esc(title)}</h3><p class="hint">${esc(hint)}</p><label class="fl"><input id="ask-v" type="${type}" value="${esc(val)}"></label><div class="btns"><button class="btn sec" data-act="close">Batal</button><button class="btn" data-act="askok">Simpan</button></div>`)}
 function openForm(it){
   form=it;const t=it.type,isNew=!find(it.id);
   const seg=`<div class="seg">${Object.entries(TYPES).map(([k,v])=>`<button class="${t===k?'on':''}" style="--c:${v[1]}" data-act="ftype" data-type="${k}">${v[0]}</button>`).join('')}</div>`;
@@ -353,9 +392,9 @@ function openCfg(){
   <p class="hint">Cadangkan data sebelum pindah perangkat atau mengganti backend.</p>
   <div class="btns"><button class="btn sec" data-act="backup">⬇ Backup JSON</button><button class="btn sec" data-act="restore">⬆ Restore JSON</button></div>
   <div class="btns"><button class="btn sec" data-act="history">📜 Riwayat</button><button class="btn sec" data-act="localnotif">🔔 Izin notifikasi</button></div>
-  <p class="hint">Notifikasi browser hanya dicek ketika aplikasi sedang terbuka; notifikasi otomatis ketika tertutup memerlukan layanan push dan backend.</p>
+  <p class="hint">Pengingat utama datang dari Google Calendar (tetap berbunyi saat aplikasi ditutup). Izin ini hanya untuk peringatan tambahan ketika aplikasi sedang terbuka.</p>
   <div class="btns"><button class="btn sec" data-act="install">📲 Petunjuk Instal</button><button class="btn sec" data-act="update">🔄 Cek pembaruan</button></div>
-  <p class="hint">Versi aplikasi: <b>2.2.0</b>. Pembaruan tidak menghapus data lokal, tetapi backup tetap dianjurkan.</p>
+  <p class="hint">Versi aplikasi: <b>${APP_VERSION}</b>. Pembaruan tidak menghapus data lokal, tetapi backup tetap dianjurkan.</p>
   <div class="btns"><button class="btn sec" data-act="close">Batal</button><button class="btn" data-act="cfgsave">Simpan & Sinkron</button></div>`);
 }
 
@@ -364,7 +403,7 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id,it=id?find(id):null;
   if(a==='tab'){tab=el.dataset.type;render();scrollTo(0,0)}
-  else if(a==='new'){if(tab==='shopping'){if(routineView==='service')vehicleForm();else if(routineView==='shopping')shopItemForm();else toast('Pilih Belanja atau Servis dahulu')}else openForm(blank(tab))}
+  else if(a==='new'){if(tab==='shopping'){if(routineView==='service')vehicleForm();else if(routineView==='shopping')shopItemForm();else toast('Pilih Belanja atau Servis dahulu')}else openForm(blank(tab==='today'?'reminder':tab))}
   else if(a==='close')closeSheet()
   else if(a==='edit'&&it)openForm({...it})
   else if(a==='ftype'){collect();form.type=el.dataset.type;if(form.type==='bill'&&!form.remind)form.remind=1440;openForm(form)}
@@ -380,7 +419,11 @@ document.addEventListener('click',e=>{
   else if(a==='conv'&&it){openForm({...it,type:el.dataset.type,date:el.dataset.type==='reminder'?today():'',remind:30})}
   else if(a==='cap')capture()
   else if(a==='cfg')openCfg()
-  else if(a==='snooze'&&it){const value=prompt('Tunda perhatian sampai tanggal (YYYY-MM-DD). Kosongkan untuk membatalkan tunda:',it.snoozeUntil||ymd(new Date(Date.now()+86400000)));if(value===null)return;if(value&&(!/^\d{4}-\d{2}-\d{2}$/.test(value)||ymd(parse(value))!==value)){toast('Tanggal tidak valid');return}it.snoozeUntil=value;logAction(it,value?'Ditunda sampai '+value:'Tunda dibatalkan');upsert(it)}
+  else if(a==='snooze'&&it){askSheet('Tunda perhatian','date',it.snoozeUntil||ymd(new Date(Date.now()+86400000)),'Pilih tanggal. Kosongkan untuk membatalkan tunda.',value=>{if(value&&(!/^\d{4}-\d{2}-\d{2}$/.test(value)||ymd(parse(value))!==value)){toast('Tanggal tidak valid');return}it.snoozeUntil=value;logAction(it,value?'Ditunda sampai '+value:'Tunda dibatalkan');upsert(it)})}
+  else if(a==='askok'){const v=$('#ask-v').value,cb=askCb;askCb=null;closeSheet();if(cb)cb(v)}
+  else if(a==='syncnow'){flush();shopFlush();vehicleFlush();pull(true)}
+  else if(a==='pushlocal'&&pendingRemote){const rids=new Set(pendingRemote.map(x=>x.id));const lo=items.filter(x=>!rids.has(x.id));items=[...pendingRemote,...lo];pendingRemote=null;persist();closeSheet();render();lo.forEach(x=>enqueue({action:'save',id:x.id,item:x}));toast('Item lokal dikirim ke server')}
+  else if(a==='takeremote'&&pendingRemote){if(!confirm('Item lokal yang tidak ada di server akan dihapus dari HP ini. Lanjutkan?'))return;items=pendingRemote;pendingRemote=null;persist();closeSheet();setSync('ok');markSynced();render()}
   else if(a==='backup')downloadBackup()
   else if(a==='restore')restorePicker()
   else if(a==='history')openHistory()
@@ -388,7 +431,7 @@ document.addEventListener('click',e=>{
   else if(a==='update')checkUpdate()
   else if(a==='applyupdate'&&swReg?.waiting)swReg.waiting.postMessage({type:'SKIP_WAITING'})
   else if(a==='install')installPWA()
-  else if(a==='cfgsave'){const next={name:$('#c-name').value.trim(),url:$('#c-url').value.trim(),token:$('#c-token').value.trim()};const changed=next.url!==cfg.url||next.token!==cfg.token;if(changed&&next.url&&next.token&&items.length&&!confirm('Backend baru: data lokal dapat berbeda dari cloud. Backup terlebih dahulu. Lanjutkan sambungan tanpa mengganti data lokal secara otomatis?'))return;cfg=next;SV('a.cfg',cfg);closeSheet();render();if(ok()){toast('Menyambungkan…');if(changed){setSync('busy');toast('Sambungan disimpan. Backup & Restore untuk migrasi; data lokal tidak ditimpa.');}else pull()}}
+  else if(a==='cfgsave'){const next={name:$('#c-name').value.trim(),url:$('#c-url').value.trim(),token:$('#c-token').value.trim()};const changed=next.url!==cfg.url||next.token!==cfg.token;if(changed&&next.url&&next.token&&items.length&&!confirm('Backend baru: data lokal dapat berbeda dari cloud. Backup terlebih dahulu. Lanjutkan sambungan tanpa mengganti data lokal secara otomatis?'))return;cfg=next;SV('a.cfg',cfg);closeSheet();render();if(ok()){toast('Menyambungkan…');if(changed){setSync('busy');toast('Sambungan disimpan. Backup & Restore untuk migrasi; data lokal tidak ditimpa.');}pull(true)}}
   e.stopPropagation?.();
 });
 document.addEventListener('change',e=>{if(e.target.id==='f-kind'&&form){collect();form.kind=e.target.value;if(form.kind==='donor'){form.title=form.title||'Donor darah';form.repeat='none'}openForm(form)}});
@@ -407,7 +450,7 @@ function restorePicker(){const input=document.createElement('input');input.type=
 function openHistory(){const lines=[];items.forEach(x=>{(x.history||[]).forEach(h=>lines.push({name:x.title||x.type,...h}));(x.donorHistory||[]).forEach(h=>lines.push({name:x.title||'Donor darah',at:(h.date||today())+'T12:00:00',action:'Donor ke-'+h.number,place:h.place}))});lines.sort((a,b)=>String(b.at).localeCompare(String(a.at)));openSheet('<h3>Riwayat aktivitas</h3>'+ (lines.length?lines.slice(0,200).map(h=>`<div class="card"><div class="body"><b>${esc(h.name)}</b><div class="m">${esc(h.action)} · ${esc(String(h.at).slice(0,16).replace('T',' '))}${h.place?' · 📍 '+esc(h.place):''}</div></div></div>`).join(''):'<p class="hint">Belum ada aktivitas yang tercatat.</p>')+'<button class="btn" data-act="close">Tutup</button>')}
 async function requestLocalNotifications(){if(!('Notification'in window)){toast('Browser ini belum mendukung notifikasi');return}if(Notification.permission==='granted'){toast('Izin notifikasi sudah diberikan');return}const p=await Notification.requestPermission();toast(p==='granted'?'Notifikasi aktif selama aplikasi terbuka':'Izin notifikasi tidak diberikan')}
 const notified=LS('a.notified',{});
-function localAlert(){if(document.hidden||!('Notification'in window)||Notification.permission!=='granted')return;let changed=false;const now=Date.now();items.forEach(x=>{if(x.done||x.status==='done'||x.type==='idea')return;const due=x.type==='bill'?billInfo(x).due:(x.type==='reminder'?nextOcc(x):x.date);if(!due)return;const clock=x.time||'09:00',at=new Date(due+'T'+clock+':00').getTime()-(+x.remind||0)*60000;if(!Number.isFinite(at)||now<at||now-at>86400000)return;const key=x.id+'|'+due+'|'+clock;if(notified[key])return;notified[key]=today();changed=true;try{new Notification('SaySisten: '+x.title,{body:'Agenda/tagihan perlu perhatian',icon:'./icons/icon-192.png',tag:key})}catch(e){console.warn(e)}});if(changed){Object.keys(notified).forEach(k=>{if(notified[k]<ymd(new Date(Date.now()-7*86400000)))delete notified[k]});SV('a.notified',notified)}}
+function localAlert(){if(document.hidden)return;let changed=false;const now=Date.now();items.forEach(x=>{if(x.done||x.status==='done'||x.type==='idea')return;const due=x.type==='bill'?billInfo(x).due:(x.type==='reminder'?nextOcc(x):x.date);if(!due)return;const clock=x.time||'09:00',at=new Date(due+'T'+clock+':00').getTime()-(+x.remind||0)*60000;if(!Number.isFinite(at)||now<at||now-at>86400000)return;const key=x.id+'|'+due+'|'+clock;if(notified[key])return;notified[key]=today();changed=true;toast('⏰ '+x.title+(x.type==='bill'?' · tagihan jatuh tempo':' · pengingat'));try{if('Notification'in window&&Notification.permission==='granted')new Notification('SaySisten: '+x.title,{body:'Agenda/tagihan perlu perhatian',icon:'./icons/icon-192.png',tag:key})}catch(e){console.warn(e)}});if(changed){Object.keys(notified).forEach(k=>{if(notified[k]<ymd(new Date(Date.now()-7*86400000)))delete notified[k]});SV('a.notified',notified)}}
 setInterval(localAlert,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)localAlert()});
 let deferredInstallPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;render()});
@@ -430,7 +473,7 @@ function shopCur(){return shopEnsurePeriod(shopMonth)}
 function shopTotals(p){const purchased=p.items.filter(i=>i.checked&&!i.skipped),spent=purchased.reduce((s,i)=>s+(Number(i.actual??i.estimate)||0),0),estimate=p.items.filter(i=>!i.skipped).reduce((s,i)=>s+(Number(i.estimate)||0),0);return{spent,estimate,count:purchased.length,pending:p.items.filter(i=>!i.checked&&!i.skipped).length}}
 function shopAttention(){const p=shopData[shopKey(shopMonthNow())];if(!p)return 0;const due=Number(p.targetDay)||5;return (new Date().getDate()>=due&&p.items.some(i=>!i.checked&&!i.skipped))||p.items.some(i=>i.pending)?1:0}
 function shopApplyRemote(records){let changed=false;const dirty=new Set(shopDirty.map(x=>x.id));for(const r of records){if(!r||!r.id||!Array.isArray(r.items)||dirty.has(r.id))continue;const l=shopData[r.id];if(!l){shopData[r.id]=r;changed=true}else if(!l.updated||String(r.updated)>String(l.updated)){shopData[r.id]=r;changed=true}}if(changed){shopPersist();render()}}
-async function shopFlush(){if(shopSending||!ok()||!navigator.onLine||!shopDirty.length)return;shopSending=true;try{while(shopDirty.length){const op=shopDirty[0];await api({action:'shopSave',record:op.record});shopDirty.shift();shopPersist()}setSync('ok')}catch(e){setSync('err');console.warn('Shopping sync:',e);toast('Belanja tersimpan lokal; sinkron tertunda')}finally{shopSending=false}}
+async function shopFlush(){if(shopSending||!ok()||!navigator.onLine||!shopDirty.length)return;shopSending=true;try{while(shopDirty.length){const op=shopDirty[0];try{await api({action:'shopSave',record:op.record})}catch(e){if(dropable(e))rejectOp({action:'shopSave',id:op.id},e);else throw e}shopDirty.shift();shopPersist()}setSync('ok')}catch(e){setSync('err');console.warn('Shopping sync:',e);toast('Belanja tersimpan lokal; sinkron tertunda')}finally{shopSending=false}}
 function shopMonthOptions(){let months=new Set(Object.keys(shopData).filter(x=>x.startsWith('period:')).map(x=>x.slice(7)));months.add(shopMonthNow());months.add(shopMonth);return [...months].sort().reverse().map(m=>`<option value="${m}" ${shopMonth===m?'selected':''}>${MON[Number(m.slice(5))-1]} ${m.slice(0,4)}</option>`).join('')}
 function vShoppingList(){const p=shopCur(),t=shopTotals(p),pct=p.items.length?Math.round((t.count+p.items.filter(i=>i.skipped).length)/p.items.length*100):0;
 const cats=[...new Set(p.items.map(i=>i.category||'Lainnya'))];
@@ -468,8 +511,9 @@ const vehDate=(d,n,unit)=>{const x=parse(d);if(unit==='days')x.setDate(x.getDate
 const vehicleList=()=>Object.values(vehicleData).filter(x=>x&&!x.deleted).sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
 function vehicleValidate(input){if(!input||typeof input!=='object'||Array.isArray(input))throw Error('Format kendaraan tidak valid');let o={};for(const [k,v] of Object.entries(input)){if(!v||typeof v!=='object'||typeof v.id!=='string'||k!==v.id||!Array.isArray(v.services)||v.services.length>500)continue;o[k]=v}return o}
 function vehicleSave(v){v.updated=new Date().toISOString();vehicleData[v.id]=v;vehicleDirty=vehicleDirty.filter(x=>x.id!==v.id);vehicleDirty.push({id:v.id,record:JSON.parse(JSON.stringify(v))});vehiclePersist();render();vehicleFlush()}
-async function vehicleFlush(){if(vehicleSending||!ok()||!navigator.onLine||!vehicleDirty.length)return;vehicleSending=true;try{while(vehicleDirty.length){let op=vehicleDirty[0];await api({action:'vehicleSave',record:op.record});vehicleDirty.shift();vehiclePersist()}setSync('ok')}catch(e){setSync('err');console.warn('Vehicle sync:',e);toast('Kendaraan tersimpan lokal, sinkronisasi tertunda')}finally{vehicleSending=false}}
+async function vehicleFlush(){if(vehicleSending||!ok()||!navigator.onLine||!vehicleDirty.length)return;vehicleSending=true;try{while(vehicleDirty.length){let op=vehicleDirty[0];try{await api({action:'vehicleSave',record:withCal(op.record)})}catch(e){if(dropable(e))rejectOp({action:'vehicleSave',id:op.id},e);else throw e}vehicleDirty.shift();vehiclePersist()}setSync('ok')}catch(e){setSync('err');console.warn('Vehicle sync:',e);toast('Kendaraan tersimpan lokal, sinkronisasi tertunda')}finally{vehicleSending=false}}
 function vehicleApplyRemote(records){const dirty=new Set(vehicleDirty.map(x=>x.id));let changed=false;for(const r of records){if(!r||typeof r.id!=='string'||!Array.isArray(r.services)||dirty.has(r.id))continue;let prev=vehicleData[r.id];if(!prev||String(r.updated)>String(prev.updated||'')){vehicleData[r.id]=r;changed=true}}if(changed){vehiclePersist();render()}}
+function withCal(rec){const r=JSON.parse(JSON.stringify(rec));try{const d=vehicleDue(r);r.calDate=(rec.deleted||!d.dueDate||d.dueDate<today())?'':d.dueDate;r.calTitle='Servis '+(rec.name||'kendaraan')+(rec.plate?' ('+rec.plate+')':'')}catch(e){}return r}
 function vehicleLast(v){return [...(v.services||[])].sort((a,b)=>String(b.date).localeCompare(String(a.date)))[0]||null}
 function vehicleDue(v){const last=vehicleLast(v),ref=last?.date||v.initialDate||'',fromKm=vehNum(last?.km??v.initialKm),days=vehNum(v.interval),dueDate=ref&&days?vehDate(ref,days,v.unit||'months'):null,dueKm=v.kmInterval?fromKm+vehNum(v.kmInterval):null,curKm=v.currentKm===''||v.currentKm==null?null:vehNum(v.currentKm);return {dueDate,dueKm,kmReached:dueKm!==null&&curKm!==null&&curKm>=dueKm,late:!!(dueDate&&dueDate<=today()),last}}
 function vehicleAttention(){return vehicleList().filter(v=>{let d=vehicleDue(v);return d.late||d.kmReached||v.pending===true}).length}
@@ -483,7 +527,7 @@ document.addEventListener('click',e=>{const el=e.target.closest('[data-routine],
 /* ===== init ===== */
 $('#ic-cfg').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;
 
-items=items.map(norm);render();localAlert();setSync(ok()?'busy':'local');pull();
+items=items.map(norm);render();localAlert();updSyncTxt();setInterval(updSyncTxt,5000);setSync(ok()?'busy':'local');pull();
 </script>
 </body>
 </html>
