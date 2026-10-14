@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#6d5dfc">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>SaySistent</title>
+<title>SaySisten</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" href="./icons/icon-192.png">
-<meta name="apple-mobile-web-app-title" content="SaySistent">
+<meta name="apple-mobile-web-app-title" content="SaySisten">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -55,8 +55,8 @@ h3.sec{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--
 .sum small{opacity:.85;font-weight:600}.sum b{display:block;font-size:26px;font-weight:800;margin:2px 0 10px}
 .bar{height:8px;background:rgba(255,255,255,.3);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#fff;border-radius:9px}
 .empty{text-align:center;color:var(--mu);padding:46px 20px;font-size:14px}.empty div{font-size:40px;margin-bottom:8px}
-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(528px,calc(100% - 32px));display:grid;grid-template-columns:repeat(4,1fr);background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px;padding:8px;box-shadow:0 10px 30px rgba(60,40,160,.2);z-index:5}
-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:16px;font-size:11px;font-weight:700;color:var(--mu)}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));width:min(528px,calc(100% - 32px));display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:24px;padding:8px;box-shadow:0 10px 30px rgba(60,40,160,.2);z-index:5}
+nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:16px;font-size:10px;font-weight:700;color:var(--mu)}
 nav button.on{color:var(--pri);background:color-mix(in srgb,var(--pri) 12%,transparent)}
 .fab{position:fixed;right:max(20px,calc(50% - 264px));bottom:calc(94px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:20px;background:linear-gradient(135deg,#6d5dfc,#ff7ab8);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(109,93,252,.45);z-index:6}
 .navbadge{position:absolute;top:0;right:13%;min-width:18px;height:18px;padding:0 4px;border-radius:20px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid var(--card)}
@@ -78,7 +78,7 @@ nav button{position:relative}.pending-label{display:inline-flex;align-items:cent
 .btn{flex:1;padding:14px;border-radius:16px;font-weight:800;background:linear-gradient(135deg,#6d5dfc,#a45bff);color:#fff}
 .btn.sec{background:var(--bg);color:var(--tx);flex:none;padding:14px 18px}.btn.del{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad);flex:none;padding:14px 18px}
 .hint{font-size:12px;color:var(--mu);line-height:1.5;margin:0 0 12px}
-#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translate(-50%,-80px);background:#1f1b3a;color:#fff;padding:10px 16px;border-radius:14px;font-size:13px;font-weight:600;transition:.3s;z-index:40}
+.shopcard{display:block;cursor:default}.shoprow{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--ln)}.shoprow:last-child{border-bottom:0}.shoprow .body{flex:1;min-width:0}.shoprow input[type=checkbox]{width:22px;height:22px;accent-color:var(--bill)}.shoptools{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}.shoptools button{padding:9px 11px;background:var(--bg);border-radius:11px;font-size:12px;font-weight:700}.shopselect{width:100%;padding:11px;color:var(--tx);background:var(--card);border:1px solid var(--ln);border-radius:12px}.shoptitle{display:flex;justify-content:space-between;align-items:center;gap:8px}.shopstats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.shopstats>div{background:var(--card);border-radius:16px;padding:13px;box-shadow:var(--sh)}.shopstats b{font-size:18px;display:block}.shopstats small{color:var(--mu)}.shopline{height:8px;border-radius:10px;background:var(--ln);overflow:hidden;margin:10px 0}.shopline i{display:block;background:var(--bill);height:100%;border-radius:10px}#toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translate(-50%,-80px);background:#1f1b3a;color:#fff;padding:10px 16px;border-radius:14px;font-size:13px;font-weight:600;transition:.3s;z-index:40}
 #toast.show{transform:translate(-50%,0)}
 </style>
 </head>
@@ -124,7 +124,7 @@ const I={
  pin:P('<path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/>'),
  cfg:P('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>')
 };
-const TYPES={idea:['Ide','var(--idea)','idea'],reminder:['Pengingat','var(--rem)','rem'],bill:['Tagihan','var(--bill)','bill'],task:['Tugas','var(--task)','task']};
+const TYPES={idea:['Ide','var(--idea)','idea'],reminder:['Pengingat','var(--rem)','rem'],bill:['Tagihan','var(--bill)','bill'],task:['Tugas','var(--task)','task'],shopping:['Rutinitas','var(--bill)','bill']};
 const REMIND=[[0,'Tepat waktu'],[10,'10 menit sebelum'],[30,'30 menit sebelum'],[60,'1 jam sebelum'],[180,'3 jam sebelum'],[1440,'1 hari sebelum'],[4320,'3 hari sebelum'],[10080,'1 minggu sebelum']];
 
 /* ===== state ===== */
@@ -163,7 +163,7 @@ async function pull(){
   if(!ok())return;
   await flush();
   if(queue.length)return;
-  try{setSync('busy');const j=await api({},true);const remote=(Array.isArray(j.items)?j.items:[]).map(norm);const rids=new Set(remote.map(x=>x.id));const localOnly=items.filter(x=>!rids.has(x.id));if(localOnly.length){setSync('err');toast('Ada data lokal berbeda. Backup dahulu; data belum ditimpa.');return}items=remote;persist();setSync('ok');render()}
+  try{setSync('busy');const j=await api({},true);if(Array.isArray(j.shopping))shopApplyRemote(j.shopping);const remote=(Array.isArray(j.items)?j.items:[]).map(norm);const rids=new Set(remote.map(x=>x.id));const localOnly=items.filter(x=>!rids.has(x.id));if(localOnly.length){setSync('err');toast('Ada data lokal berbeda. Backup dahulu; data belum ditimpa.');return}items=remote;persist();setSync('ok');render()}
   catch(e){setSync('err');toast('Sinkron gagal: '+e.message)}
 }
 
@@ -242,9 +242,9 @@ function render(){
   $('#bn').innerHTML=(ok()?'':'<div class="banner">Mode lokal: data hanya di HP ini. Buka ⚙ untuk hubungkan Google Calendar.</div>')+(deferredInstallPrompt?'<div class="banner"><button data-act="install">📲 Instal aplikasi pada HP</button></div>':'');
   const T=today(),R=items.filter(x=>x.type==='reminder'&&!x.done),B=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)}));
   $('#stats').innerHTML=[[R.filter(x=>nextOcc(x)===T).length,'Agenda hari ini'],[B.filter(x=>x.i.thisMonth&&!x.i.paid).length,'Tagihan belum lunas'],[items.filter(x=>x.type==='task'&&!x.done).length,'Tugas tersisa']].map(s=>`<div class="stat"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('');
-  const badges=attentionCounts();
+  const badges=attentionCounts();badges.shopping=shopAttention();
   $('#nav').innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="${tab===k?'on':''}" data-act="tab" data-type="${k}">${I[v[2]]}${v[0]}${badges[k]?`<span class="navbadge">${badges[k]>99?'99+':badges[k]}</span>`:''}</button>`).join('');
-  $('#view').innerHTML=({idea:vIdea,reminder:vRem,bill:vBill,task:vTask})[tab]();
+  $('#view').innerHTML=({idea:vIdea,reminder:vRem,bill:vBill,task:vTask,shopping:vShopping})[tab]();
   const count=Object.values(badges).reduce((a,b)=>a+b,0);$('#bn').innerHTML+=(count?`<div class="notice"><span>🔴 <b>${count} perhatian</b> · Item belum terlaksana atau sudah jatuh tempo</span><button class="mini" data-act="attn">Lihat</button></div>`:'');
 }
 const empty=(e,t)=>`<div class="empty"><div>${e}</div>${t}</div>`;
@@ -355,7 +355,7 @@ function openCfg(){
   <div class="btns"><button class="btn sec" data-act="history">📜 Riwayat</button><button class="btn sec" data-act="localnotif">🔔 Izin notifikasi</button></div>
   <p class="hint">Notifikasi browser hanya dicek ketika aplikasi sedang terbuka; notifikasi otomatis ketika tertutup memerlukan layanan push dan backend.</p>
   <div class="btns"><button class="btn sec" data-act="install">📲 Petunjuk Instal</button><button class="btn sec" data-act="update">🔄 Cek pembaruan</button></div>
-  <p class="hint">Versi aplikasi: <b>2.1.0</b>. Pembaruan tidak menghapus data lokal, tetapi backup tetap dianjurkan.</p>
+  <p class="hint">Versi aplikasi: <b>2.2.0</b>. Pembaruan tidak menghapus data lokal, tetapi backup tetap dianjurkan.</p>
   <div class="btns"><button class="btn sec" data-act="close">Batal</button><button class="btn" data-act="cfgsave">Simpan & Sinkron</button></div>`);
 }
 
@@ -364,7 +364,7 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id,it=id?find(id):null;
   if(a==='tab'){tab=el.dataset.type;render();scrollTo(0,0)}
-  else if(a==='new')openForm(blank(tab))
+  else if(a==='new'){if(tab==='shopping')shopItemForm();else openForm(blank(tab))}
   else if(a==='close')closeSheet()
   else if(a==='edit'&&it)openForm({...it})
   else if(a==='ftype'){collect();form.type=el.dataset.type;if(form.type==='bill'&&!form.remind)form.remind=1440;openForm(form)}
@@ -374,7 +374,7 @@ document.addEventListener('click',e=>{
   else if(a==='done'&&it){it.done=!it.done;it.status=it.done?'done':'open';logAction(it,it.done?'Selesai':'Dibuka kembali');upsert(it)}
   else if(a==='pending'&&it){it.status=it.status==='pending'?'open':'pending';if(it.status==='pending')it.done=false;logAction(it,it.status==='pending'?'Belum terlaksana':'Aktif kembali');upsert(it)}
   else if(a==='billpending'&&it){const k=billInfo(it).key,z=new Set((it.pendingMonths||'').split(',').filter(Boolean));z.has(k)?z.delete(k):z.add(k);it.pendingMonths=[...z].join(',');logAction(it,z.has(k)?'Belum terlaksana':'Status ditarik',{period:k});upsert(it)}
-  else if(a==='attn'){const first=['bill','reminder','task','idea'].find(t=>items.some(x=>x.type===t&&needsAttention(x)));if(first){tab=first;render();scrollTo(0,0)}}
+  else if(a==='attn'){const first=['bill','reminder','task','shopping','idea'].find(t=>items.some(x=>x.type===t&&needsAttention(x)));if(first){tab=first;render();scrollTo(0,0)}}
   else if(a==='pin'&&it){it.pinned=!it.pinned;upsert(it)}
   else if(a==='paid'&&it){const k=billInfo(it).key,s=new Set((it.paid||'').split(',').filter(Boolean));s.has(k)?s.delete(k):s.add(k);it.paid=[...s].join(',');logAction(it,s.has(k)?'Tagihan lunas':'Pembayaran dibatalkan',{period:k,amount:it.amount});if(s.has(k)){it.pendingMonths=(it.pendingMonths||'').split(',').filter(v=>v&&v!==k).join(',')}upsert(it)}
   else if(a==='conv'&&it){openForm({...it,type:el.dataset.type,date:el.dataset.type==='reminder'?today():'',remind:30})}
@@ -397,13 +397,13 @@ function capture(){
   const i=$('#cap'),v=i.value.trim();if(!v)return;
   upsert({...blank('idea'),title:v});toast('Ide tersimpan 💡');setTimeout(()=>$('#cap')?.focus(),50);
 }
-window.addEventListener('online',flush);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+window.addEventListener('online',()=>{flush();shopFlush()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();shopFlush()}});
 
 
 /* ===== local utilities & PWA ===== */
-function downloadBackup(){const data={format:'asisten-saya-backup',version:2,exportedAt:new Date().toISOString(),items:items.map(norm)};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='asisten-saya-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('Backup diunduh (tanpa token)')}
-function restorePicker(){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=async()=>{try{const raw=JSON.parse(await input.files[0].text());if(raw.format!=='asisten-saya-backup'||!Array.isArray(raw.items)||raw.items.length>10000)throw Error('Format backup tidak valid');const ids=new Set();const restored=raw.items.map(x=>{if(!x||typeof x!=='object'||!TYPES[x.type]||typeof x.id!=='string'||typeof x.title!=='string'||ids.has(x.id))throw Error('Data tidak valid atau ID ganda');ids.add(x.id);return norm(x)});if(!confirm('Restore akan mengganti '+items.length+' data lokal dengan '+restored.length+' data backup. Lanjutkan?'))return;items=restored;queue=restored.map(x=>({action:'save',id:x.id,item:x}));persist();render();closeSheet();toast('Restore berhasil. Periksa sinkronisasi cloud.')}catch(e){toast('Gagal restore: '+e.message)}};input.click()}
+function downloadBackup(){const data={format:'asisten-saya-backup',version:3,exportedAt:new Date().toISOString(),items:items.map(norm),shopping:shopData};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='saysisten-backup-'+today()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('Backup diunduh (tanpa token)')}
+function restorePicker(){const input=document.createElement('input');input.type='file';input.accept='.json,application/json';input.onchange=async()=>{try{const raw=JSON.parse(await input.files[0].text());if(raw.format!=='asisten-saya-backup'||!Array.isArray(raw.items)||raw.items.length>10000)throw Error('Format backup tidak valid');const ids=new Set();const restored=raw.items.map(x=>{if(!x||typeof x!=='object'||!TYPES[x.type]||typeof x.id!=='string'||typeof x.title!=='string'||ids.has(x.id))throw Error('Data tidak valid atau ID ganda');ids.add(x.id);return norm(x)});if(!confirm('Restore akan mengganti '+items.length+' data lokal dengan '+restored.length+' data backup. Lanjutkan?'))return;if(raw.shopping&&typeof raw.shopping==='object'&&confirm('Pulihkan juga data Belanja Bulanan dari backup?')){shopData=shopValidateBackup(raw.shopping);shopDirty=Object.keys(shopData).map(id=>({id,record:shopData[id]}));shopPersist();shopFlush()}items=restored;queue=restored.map(x=>({action:'save',id:x.id,item:x}));persist();render();closeSheet();toast('Restore berhasil. Periksa sinkronisasi cloud.')}catch(e){toast('Gagal restore: '+e.message)}};input.click()}
 function openHistory(){const lines=[];items.forEach(x=>{(x.history||[]).forEach(h=>lines.push({name:x.title||x.type,...h}));(x.donorHistory||[]).forEach(h=>lines.push({name:x.title||'Donor darah',at:(h.date||today())+'T12:00:00',action:'Donor ke-'+h.number,place:h.place}))});lines.sort((a,b)=>String(b.at).localeCompare(String(a.at)));openSheet('<h3>Riwayat aktivitas</h3>'+ (lines.length?lines.slice(0,200).map(h=>`<div class="card"><div class="body"><b>${esc(h.name)}</b><div class="m">${esc(h.action)} · ${esc(String(h.at).slice(0,16).replace('T',' '))}${h.place?' · 📍 '+esc(h.place):''}</div></div></div>`).join(''):'<p class="hint">Belum ada aktivitas yang tercatat.</p>')+'<button class="btn" data-act="close">Tutup</button>')}
 async function requestLocalNotifications(){if(!('Notification'in window)){toast('Browser ini belum mendukung notifikasi');return}if(Notification.permission==='granted'){toast('Izin notifikasi sudah diberikan');return}const p=await Notification.requestPermission();toast(p==='granted'?'Notifikasi aktif selama aplikasi terbuka':'Izin notifikasi tidak diberikan')}
 const notified=LS('a.notified',{});
@@ -416,6 +416,48 @@ let swReg=null;
 async function checkUpdate(){if(!swReg){toast('Pembaruan tersedia setelah aplikasi diakses lewat HTTPS');return}await swReg.update();if(swReg.waiting){showUpdate();return}toast('Pemeriksaan selesai; jika ada versi baru, opsi update akan muncul.')}
 function showUpdate(){if(document.getElementById('update-banner'))return;const el=document.createElement('div');el.id='update-banner';el.className='banner';el.innerHTML='Versi baru tersedia <button data-act="applyupdate" style="background:white;color:#6d5dfc;border-radius:8px;padding:7px;margin-left:8px">Perbarui sekarang</button>';document.querySelector('#bn').prepend(el)}
 if('serviceWorker'in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('./sw.js').then(r=>{swReg=r;if(r.waiting)showUpdate();r.addEventListener('updatefound',()=>{const worker=r.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)showUpdate()})})}).catch(e=>console.warn('Service worker:',e));let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})}
+
+/* ===== SaySisten Belanja Bulanan v2.2 ===== */
+const shopMonthNow=()=>today().slice(0,7);
+let shopData=LS('s.shopping',{}),shopDirty=LS('s.shopping.queue',[]),shopSending=false,shopMonth=shopMonthNow(),shopFormId=null;
+const shopKey=m=>'period:'+m;
+const shopTemplate=()=>shopData.template||{id:'template',kind:'template',items:[],updated:''};
+const shopPersist=()=>{SV('s.shopping',shopData);SV('s.shopping.queue',shopDirty)};
+function shopValidateBackup(x){if(!x||typeof x!=='object'||Array.isArray(x))throw Error('Data belanja tidak valid');let o={};for(const [k,v] of Object.entries(x)){if((k==='template'||/^period:\d{4}-\d{2}$/.test(k))&&v&&typeof v==='object'&&Array.isArray(v.items)&&v.items.length<=1000)o[k]=v}return o}
+function shopSave(rec){rec.updated=new Date().toISOString();shopData[rec.id]=rec;shopDirty=shopDirty.filter(q=>q.id!==rec.id);shopDirty.push({id:rec.id,record:JSON.parse(JSON.stringify(rec))});shopPersist();render();shopFlush()}
+function shopEnsurePeriod(m){let key=shopKey(m);if(shopData[key])return shopData[key];const template=shopTemplate();const previous=shopData[shopKey(ymd(new Date(Number(m.slice(0,4)),Number(m.slice(5))-2,1)).slice(0,7))];let p={id:key,kind:'period',month:m,budget:previous?.budget||0,targetDay:previous?.targetDay||5,items:template.items.filter(i=>i.routine).map(i=>({...i,id:uid(),templateId:i.id,checked:false,skipped:false,pending:false,actual:null})),sessions:[],created:new Date().toISOString()};shopSave(p);return p}
+function shopCur(){return shopEnsurePeriod(shopMonth)}
+function shopTotals(p){const purchased=p.items.filter(i=>i.checked&&!i.skipped),spent=purchased.reduce((s,i)=>s+(Number(i.actual??i.estimate)||0),0),estimate=p.items.filter(i=>!i.skipped).reduce((s,i)=>s+(Number(i.estimate)||0),0);return{spent,estimate,count:purchased.length,pending:p.items.filter(i=>!i.checked&&!i.skipped).length}}
+function shopAttention(){const p=shopData[shopKey(shopMonthNow())];if(!p)return 0;const due=Number(p.targetDay)||5;return (new Date().getDate()>=due&&p.items.some(i=>!i.checked&&!i.skipped))||p.items.some(i=>i.pending)?1:0}
+function shopApplyRemote(records){let changed=false;const dirty=new Set(shopDirty.map(x=>x.id));for(const r of records){if(!r||!r.id||!Array.isArray(r.items)||dirty.has(r.id))continue;const l=shopData[r.id];if(!l){shopData[r.id]=r;changed=true}else if(!l.updated||String(r.updated)>String(l.updated)){shopData[r.id]=r;changed=true}}if(changed){shopPersist();render()}}
+async function shopFlush(){if(shopSending||!ok()||!navigator.onLine||!shopDirty.length)return;shopSending=true;try{while(shopDirty.length){const op=shopDirty[0];await api({action:'shopSave',record:op.record});shopDirty.shift();shopPersist()}setSync('ok')}catch(e){setSync('err');console.warn('Shopping sync:',e);toast('Belanja tersimpan lokal; sinkron tertunda')}finally{shopSending=false}}
+function shopMonthOptions(){let months=new Set(Object.keys(shopData).filter(x=>x.startsWith('period:')).map(x=>x.slice(7)));months.add(shopMonthNow());months.add(shopMonth);return [...months].sort().reverse().map(m=>`<option value="${m}" ${shopMonth===m?'selected':''}>${MON[Number(m.slice(5))-1]} ${m.slice(0,4)}</option>`).join('')}
+function vShopping(){const p=shopCur(),t=shopTotals(p),pct=p.items.length?Math.round((t.count+p.items.filter(i=>i.skipped).length)/p.items.length*100):0;
+const cats=[...new Set(p.items.map(i=>i.category||'Lainnya'))];
+return `<div class="shoptitle"><h3 class="sec">🛒 Belanja Bulanan</h3><button class="mini" data-shop="template">⚙ Daftar tetap</button></div>
+<div class="shoptools"><select class="shopselect" id="shop-month" aria-label="Pilih bulan">${shopMonthOptions()}</select><button data-shop="next">+ Periode baru</button><button data-shop="history">📜 Riwayat</button></div>
+<div class="shopstats"><div><small>Estimasi kebutuhan</small><b>${rp(t.estimate)}</b></div><div><small>Sudah dibeli*</small><b>${rp(t.spent)}</b></div><div><small>Anggaran</small><b>${rp(p.budget)}</b></div><div><small>Sisa anggaran*</small><b style="color:${t.spent>p.budget?'var(--bad)':'var(--bill)'}">${rp(p.budget-t.spent)}</b></div></div>
+<p class="hint" style="margin:8px 3px">*Harga aktual yang belum diisi memakai estimasi sementara.</p><div class="shopline"><i style="width:${pct}%"></i></div><p class="hint">${t.count} dibeli · ${p.items.filter(i=>i.skipped).length} dilewati · ${t.pending} belum dibeli dari ${p.items.length} barang</p>
+<div class="shoptools"><button data-shop="settings">🎯 Anggaran & target</button><button data-shop="add">+ Barang</button><button data-shop="finish">✓ Selesai Belanja</button></div>
+${p.items.length?cats.map(cat=>`<h3 class="sec">${esc(cat)}</h3><div class="card shopcard" style="--c:var(--bill)">${p.items.filter(i=>(i.category||'Lainnya')===cat).map(i=>`<div class="shoprow"><input type="checkbox" data-shop="toggle" data-id="${esc(i.id)}" ${i.checked?'checked':''} ${i.skipped?'disabled':''} aria-label="Dibeli: ${esc(i.name)}"><div class="body"><div class="t" style="${i.checked||i.skipped?'text-decoration:line-through;opacity:.65':''}">${esc(i.name)} <small style="font-weight:400">${esc(i.qty||'')}</small></div><div class="m">${i.skipped?'Dilewati bulan ini':i.pending?'🔴 Belum terlaksana':i.checked?'✓ Dibeli':'Belum dibeli'} · ${i.actual!=null?'Aktual '+rp(i.actual):'Estimasi '+rp(i.estimate)}</div></div><button class="mini" data-shop="edit" data-id="${esc(i.id)}">Ubah</button></div>`).join('')}</div>`).join(''):'<div class="empty">🛒<p>Daftar bulan ini masih kosong. Tambahkan barang atau buat Daftar Tetap untuk bulan berikutnya.</p></div>'}
+<div class="shoptools"><button data-shop="template">🧾 Kelola barang rutin</button><button data-shop="history">📊 Riwayat belanja</button></div>`}
+function shopItemForm(id,templateMode=false){shopFormId=id||null;const p=shopCur();const it=templateMode?shopTemplate().items.find(x=>x.id===id):p.items.find(x=>x.id===id);const x=it||{name:'',qty:'',category:'Dapur',estimate:0,actual:null,routine:false,skipped:false,pending:false};
+openSheet(`<h3>${it?'Edit':'Tambah'} barang ${templateMode?'rutin':'belanja'}</h3>
+${fl('Nama barang',`<input id="sh-name" value="${esc(x.name)}" placeholder="Contoh: Beras">`)}
+<div class="row">${fl('Jumlah & satuan',`<input id="sh-qty" value="${esc(x.qty)}" placeholder="5 kg">`)}${fl('Kategori',`<select id="sh-cat">${['Dapur','Kebersihan','Kamar Mandi','Rumah','Lainnya'].map(c=>`<option ${c===x.category?'selected':''}>${c}</option>`).join('')}</select>`)}</div>
+<div class="row">${fl('Estimasi (Rp)',`<input id="sh-est" type="number" min="0" value="${Number(x.estimate)||0}">`)}${templateMode?'':fl('Harga aktual (Rp)',`<input id="sh-actual" type="number" min="0" placeholder="Belum diketahui" value="${x.actual??''}">`)}</div>
+<label class="fl"><input id="sh-routine" type="checkbox" ${templateMode||x.routine?'checked':''}> Jadikan barang rutin (muncul di periode berikutnya)</label>
+${templateMode?'':`<label class="fl"><input id="sh-skipped" type="checkbox" ${x.skipped?'checked':''}> Lewati bulan ini (stok masih ada)</label><label class="fl"><input id="sh-pending" type="checkbox" ${x.pending?'checked':''}> Belum terlaksana</label>${it?'<label class="fl"><input id="sh-update-template" type="checkbox"> Ubah juga daftar tetap untuk bulan berikutnya</label>':''}`}
+<div class="btns">${it?'<button class="btn del" data-shop="delete" data-id="'+esc(id)+'" data-tpl="'+(templateMode?'1':'0')+'">Hapus</button>':''}<button class="btn" data-shop="save" data-tpl="${templateMode?'1':'0'}">Simpan</button></div>`)}
+function shopSaveForm(templateMode){const val=id=>$('#'+id),name=val('sh-name').value.trim(),qty=val('sh-qty').value.trim(),cat=val('sh-cat').value,est=Number(val('sh-est').value),routine=val('sh-routine').checked;if(!name||!Number.isFinite(est)||est<0){toast('Isi nama dan harga valid');return}let p=shopCur(),t=shopTemplate(),list=templateMode?t.items:p.items;let old=list.find(i=>i.id===shopFormId);let obj={...(old||{id:uid()}),name,qty,category:cat,estimate:est,routine};if(!templateMode){const a=val('sh-actual').value;obj.actual=a===''?null:Number(a);if(obj.actual!=null&&(!Number.isFinite(obj.actual)||obj.actual<0)){toast('Harga aktual tidak valid');return}obj.skipped=val('sh-skipped').checked;obj.pending=val('sh-pending').checked;obj.checked=obj.skipped?false:!!obj.checked}if(old)Object.assign(old,obj);else list.push(obj);
+if(templateMode){shopSave(t)}else{if(routine&&(val('sh-update-template')?.checked||!old)){let original=t.items.find(i=>i.id===(old?.templateId||obj.templateId));let n={id:original?.id||uid(),name,qty,category:cat,estimate:est,routine:true};if(original)Object.assign(original,n);else t.items.push(n);obj.templateId=n.id;shopSave(t)}if(!routine&&old?.templateId&&val('sh-update-template')?.checked){t.items=t.items.filter(i=>i.id!==old.templateId);shopSave(t)}shopSave(p)}closeSheet();render();toast('Barang tersimpan')}
+function shopTemplatePage(){const t=shopTemplate();openSheet(`<h3>🧾 Daftar barang tetap</h3><p class="hint">Barang rutin disalin ke periode baru. Mengubah template tidak mengubah riwayat atau checklist bulan sebelumnya.</p><button class="btn" data-shop="templateadd">+ Barang rutin</button>${t.items.map(i=>`<div class="shoprow"><div class="body"><b>${esc(i.name)}</b><div class="m">${esc(i.qty)} · ${rp(i.estimate)} · ${esc(i.category)}</div></div><button class="mini" data-shop="templateedit" data-id="${esc(i.id)}">Ubah</button></div>`).join('')||'<p class="hint">Belum ada barang rutin.</p>'}<div class="btns"><button class="btn sec" data-act="close">Tutup</button></div>`)}
+function shopSettings(){const p=shopCur();openSheet(`<h3>Anggaran & jadwal belanja</h3>${fl('Anggaran bulan ini (Rp)',`<input id="sh-budget" type="number" min="0" value="${p.budget}">`)}${fl('Target tanggal belanja setiap bulan (1–31)',`<input id="sh-target" type="number" min="1" max="31" value="${p.targetDay}">`)}<p class="hint">Badge perhatian muncul saat target tercapai tetapi masih ada barang belum dibeli. Pengingat HP saat tertutup belum termasuk fitur ini.</p><button class="btn" data-shop="savesettings">Simpan</button>`)}
+function shopHistory(){const all=Object.values(shopData).filter(x=>x.kind==='period').sort((a,b)=>b.month.localeCompare(a.month));openSheet(`<h3>📊 Riwayat Belanja</h3>${all.map(p=>{const t=shopTotals(p);return `<div class="card shopcard"><b>${esc(p.month)}</b><div class="m">${p.items.length} barang · dibeli ${t.count} · ${p.sessions?.length||0} sesi</div><div class="m">Total perkiraan pengeluaran: ${rp(t.spent)}</div>${(p.sessions||[]).map(s=>`<div class="m">✓ ${esc(String(s.at).slice(0,10))}: ${rp(s.total)} · ${s.count} barang</div>`).join('')}</div>`}).join('')||'<p class="hint">Belum ada riwayat.</p>'}<button class="btn" data-act="close">Tutup</button>`)}
+function shopFinish(){const p=shopCur(),fresh=p.items.filter(i=>i.checked&&!i.skipped&&!(p.sessions||[]).some(s=>(s.itemIds||[]).includes(i.id)));if(!fresh.length){toast('Belum ada pembelian baru yang dicentang');return}const total=fresh.reduce((s,i)=>s+Number((i.actual??i.estimate)||0),0);if(!confirm(`Catat ${fresh.length} barang sebagai sesi belanja dengan total ${rp(total)}? Harga tanpa aktual memakai estimasi.`))return;p.sessions=p.sessions||[];p.sessions.push({id:uid(),at:new Date().toISOString(),itemIds:fresh.map(i=>i.id),count:fresh.length,total});shopSave(p);toast('Sesi belanja tersimpan')}
+function shopNext(){const base=parse(shopMonth+'-01'),m=ymd(new Date(base.getFullYear(),base.getMonth()+1,1)).slice(0,7);shopMonth=m;shopEnsurePeriod(m);render()}
+document.addEventListener('change',e=>{if(e.target.id==='shop-month'){shopMonth=e.target.value;shopEnsurePeriod(shopMonth);render()}});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-shop]');if(!el)return;const act=el.dataset.shop,p=shopCur(),id=el.dataset.id,templateMode=el.dataset.tpl==='1';if(act==='add')shopItemForm();else if(act==='template')shopTemplatePage();else if(act==='templateadd')shopItemForm(null,true);else if(act==='templateedit')shopItemForm(id,true);else if(act==='edit')shopItemForm(id);else if(act==='save')shopSaveForm(templateMode);else if(act==='settings')shopSettings();else if(act==='savesettings'){const b=Number($('#sh-budget').value),day=Number($('#sh-target').value);if(!Number.isFinite(b)||b<0||!Number.isInteger(day)||day<1||day>31){toast('Periksa anggaran dan tanggal');return}p.budget=b;p.targetDay=day;shopSave(p);closeSheet()}else if(act==='toggle'){const it=p.items.find(x=>x.id===id);if(it&&!it.skipped){it.checked=el.checked;if(it.checked)it.pending=false;shopSave(p)}}else if(act==='delete'){if(!confirm('Hapus barang ini dari daftar?'))return;const r=templateMode?shopTemplate():p;r.items=r.items.filter(x=>x.id!==id);shopSave(r);closeSheet()}else if(act==='history')shopHistory();else if(act==='finish')shopFinish();else if(act==='next')shopNext();e.stopPropagation()});
 
 /* ===== init ===== */
 $('#ic-cfg').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;

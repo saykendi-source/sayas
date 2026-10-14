@@ -1,54 +1,43 @@
-## Pembaruan nama aplikasi
-Nama instalasi PWA, judul halaman, dan nama notifikasi kini **SaySisten**. Cache service worker diperbarui menjadi `saysisten-v2.1.1`. Untuk perangkat yang sudah memasang aplikasi, ikon/nama di launcher mungkin perlu diinstal ulang.
+# SaySisten 2.2 – Belanja Bulanan
 
-# Asisten Saya 2.1 — paket GitHub Pages / PWA
+## Apa yang baru
 
-## Unggah ke GitHub Pages
-Unggah **semua** file/folder ini ke root repository yang sudah dikonfigurasi untuk GitHub Pages:
+Menu kelima **Rutinitas** berisi **Belanja Bulanan**. Semua menu lama (Ide, Pengingat termasuk Donor Darah, Tagihan, Tugas) tetap tersedia.
 
-- `index.html`
-- `manifest.webmanifest`
-- `sw.js`
-- `icons/icon-192.png`
-- `icons/icon-512.png`
+- **Daftar tetap**: catat barang rutin sekali; otomatis disalin untuk periode baru.
+- **Barang tambahan**: barang yang hanya berlaku di satu bulan.
+- **Checklist berbeda setiap bulan**: tidak menghapus atau mereset transaksi dari bulan sebelumnya.
+- **Status Lewati bulan ini** dan **Belum terlaksana**.
+- **Anggaran dan target tanggal** setiap bulan.
+- **Estimasi** dan **harga aktual** (harga aktual kosong menggunakan estimasi *sementara*).
+- **Selesai Belanja** untuk menyimpan sesi pembelian yang belum pernah dicatat sebelumnya.
+- **Riwayat** periode dan sesi belanja.
+- **Backup/Restore JSON** meliputi data belanja dan data lama.
+- **Sinkronisasi belanja** ke tab Spreadsheet **Shopping** dengan `Code.gs` terbaru.
 
-Commit perubahan. Pastikan akses `https://USERNAME.github.io/REPO/` menampilkan aplikasi, manifest dan SW tanpa 404. Semua path relatif sehingga juga berlaku untuk `https://USERNAME.github.io/`.
+## Urutan update aman
 
-## Instal di HP
-Android: buka URL **HTTPS** via Chrome (bukan preview GitHub/file lokal/in-app browser); interaksikan halaman dan lihat menu ⋮ → **Instal aplikasi** / **Tambahkan ke layar utama**. Chrome dapat tidak menampilkan promosi otomatis jika syarat atau heuristik belum terpenuhi, atau aplikasi sudah terpasang. Pemeriksaan: Chrome DevTools → Application → Manifest dan Service Workers; pastikan ada ikon 192 dan 512, manifest valid, serta SW aktif. Safari iPhone: Bagikan → Tambahkan ke Layar Utama.
+1. Di aplikasi lama, buka Pengaturan → **Backup JSON**. Buat juga salinan Google Spreadsheet.
+2. Di Apps Script yang terhubung dengan Google Sheet, ganti `Code.gs` dengan versi ini. **WAJIB mengganti `TOKEN = 'GANTI_DENGAN_TOKEN_LAMA_ANDA'` dengan token yang saat ini dipakai** (jangan taruh token di GitHub publik). Jalankan `authorize()` jika diperlukan, lalu **Deploy > Manage deployments > Edit > New version > Deploy**.
+3. Pada GitHub Pages, upload/replace **`index.html`, `manifest.webmanifest`, `sw.js`, dan folder `icons`** dari paket ini pada folder yang sama seperti instalasi sebelumnya. **Jangan unggah `Code.gs` ke GitHub Pages**.
+4. Buka aplikasi saat online. Gunakan Pengaturan → Cek pembaruan / Perbarui sekarang jika tersedia. Bila UI masih versi lama, refresh halaman setelah deployment selesai.
+5. Masuk Rutinitas → Daftar tetap, tambah beberapa barang rutin. Buka periode belanja bulan ini dan checklist. Periode berikutnya dibuat dengan tombol **+ Periode baru** atau ketika bulan berganti dan menu dibuka.
+6. Pastikan tab **Shopping** muncul di spreadsheet setelah menyimpan belanja. Sinkronisasi hanya berjalan jika backend terbaru telah di-deploy dan URL/token cocok.
 
-## Cara update setelah terpasang
-Commit pembaruan GitHub Pages. Saat versi SW berubah, buka aplikasi saat tersambung internet, kemudian pilih tombol **Perbarui sekarang** jika banner tampil atau klik ⚙ → **Cek pembaruan**. Jika mengubah file di pembaruan berikutnya, **ubah konstanta CACHE di sw.js** (misal menjadi `asisten-saya-v2.0.1`) serta nomor versi di HTML. Tanpa mengganti nama cache, SW tetap dapat mengenali perubahan berkas sw.js, tetapi versi eksplisit membantu memastikan migrasi cache. Beberapa ponsel baru mengambil update setelah aplikasi ditutup/dibuka.
+## Cara memakai belanja
 
-## Fitur baru
-- Status Belum terlaksana kini tetap disimpan setelah restart, termasuk penandaan tagihan per bulan.
-- Badge perhatian, donor darah (hari/bulan, lokasi, nomor berikutnya).
-- **Tunda** item sampai tanggal pilihan, tanpa mengubah tanggal agenda aslinya.
-- Riwayat catatan donor dan aksi baru (aksi sebelum upgrade tidak selalu ada dalam riwayat).
-- **Backup** JSON lokal (tanpa token), **Restore** mengganti data lokal setelah konfirmasi.
-- Total tagihan bulan berjalan dihitung terpisah dari indikator tunggakan tertua.
-- Pemeriksaan update SW dan cache offline untuk berkas aplikasi.
-- Permintaan izin notifikasi browser dan pengecekan waktu jatuh tempo **hanya ketika aplikasi terbuka**. Jika ingin notifikasi terjadwal saat aplikasi tertutup, diperlukan layanan push terpisah (misal Apps Script dengan Calendar reminders, atau server Web Push dengan VAPID + scheduler + endpoint subscriptions). Kode ini **belum** mengimplementasikan push background otomatis.
+- **+ Barang** → nama, jumlah, kategori, harga estimasi, pilihan rutin. Edit kemudian untuk harga aktual, Lewati bulan ini, atau Belum terlaksana.
+- **Daftar tetap** → menyunting barang yang akan muncul **pada periode yang baru dibuat**. Tidak mengubah riwayat yang sudah ada.
+- **🎯 Anggaran & target** → tetapkan anggaran dan tanggal jatuh tempo perhatian.
+- **✓ Selesai Belanja** → simpan satu sesi dari semua barang tercentang yang **belum tercatat dalam sesi sebelumnya**; tidak menghapus checklist.
+- **📜 Riwayat** → melihat periode lama dan sesi yang sudah disimpan.
+- **Pilih bulan** → membuka kembali bulan lalu tanpa reset. Periodenya dibuat otomatis apabila belum ada.
 
-## Data & sinkronisasi
-- LocalStorage browser menyimpan data lokal; memperbarui berkas PWA pada **URL/origin yang sama** pada umumnya tidak menghapusnya. Menghapus data situs, mengganti domain, pindah HP, atau instal ulang tertentu dapat menghilangkan data. **Backup sebelum upgrade atau migrasi**.
-- `URL Apps Script` dan token tetap dapat diisi. `Code.gs` kini disertakan dan menyimpan field donor, riwayat, status serta penundaan. Setelah menempel kode backend, deploy ulang sebagai versi Web App baru. Periksa data dan backup sebelum migrasi. Menyimpan konfigurasi backend baru **tidak lagi melakukan pull agresif**. Sinkronisasi multi-perangkat secara bersamaan dan penyelesaian konflik belum dijamin aman; hindari penggunaan dua perangkat aktif tanpa backend yang menangani revisi & konflik.
-- Restore lokal tidak otomatis menghapus item yang sudah terhapus di cloud. Lakukan verifikasi sebelum menyinkronkan backup dengan cloud.
+## Batasan
 
-## Catatan keterbatasan
-- Notifikasi browser tidak sama dengan push ketika aplikasi tertutup.
-- Tunggakan historis ditampilkan melalui periode tertua yang belum lunas; rekap bulanan tetap berdasar bulan berjalan. Untuk pembayaran *bulan berjalan* sementara tunggakan lama masih ada, lunasi tunggakan terdahulu atau gunakan pengelolaan data periode melalui pengembangan backend lebih lanjut.
-- Ini tidak menggantikan pemeriksaan kelayakan medis donor darah.
-
-
-## Migrasi Code.gs lama ke backend v2.1
-1. Buat cadangan Google Sheet dan Backup JSON dari aplikasi dahulu.
-2. Buka spreadsheet yang digunakan backend lama → Extensions → Apps Script.
-3. Ganti kode lama dengan `Code.gs` di paket ini (jangan hapus spreadsheet `Data`).
-4. Set `TOKEN` ke token lama agar konfigurasi aplikasi tetap bisa dipakai, atau ganti kedua sisi secara bersamaan. Untuk jangka panjang gunakan token acak kuat dan jangan sebarkan.
-5. Atur zona waktu script pada Project Settings sesuai zona waktu agenda (contoh `Asia/Jakarta`).
-6. Jalankan `authorize()` dari editor untuk memberi otorisasi Sheet dan Calendar; ini juga menambahkan kolom baru tanpa menghapus kolom lama.
-7. Deploy → Manage deployments → Edit → Version: New version → Deploy. Jika menggunakan deployment yang sama, URL `/exec` biasanya tetap.
-8. Pada aplikasi, buka Pengaturan, periksa sambungan dan lakukan tes menambah satu pengingat donor lalu lihat kolom baru di Sheet dan event di Calendar.
-
-**Keterbatasan:** satu Calendar event berulang untuk tagihan/pengingat tidak secara otomatis menandai pembayaran per bulan pada Calendar. Perubahan status di satu perangkat yang dibuat serentak dengan perubahan di perangkat lain masih dapat bertabrakan, karena backend belum memakai revision/compare-and-swap. Gunakan satu HP utama. Backup JSON direkomendasikan sebelum perubahan besar. Notifikasi terjadwal saat browser sepenuhnya tertutup mengandalkan notifikasi Google Calendar, bukan Web Push dari PWA.
+- Tidak menyediakan notifikasi push saat HP ditutup/terkunci; badge ada dalam aplikasi.
+- Sinkronisasi menggunakan **last-write-wins per template/periode**. Jangan mengedit periode yang sama di dua HP secara bersamaan sampai tersedia resolusi konflik server yang lebih ketat.
+- Backup harus dilakukan sebelum mengganti perangkat, menghapus instalasi/penyimpanan situs, atau update besar.
+- Data riwayat sesi mempertahankan total saat sesi dicatat; daftar belanja periode masih bisa diedit. Harga aktual yang kosong dihitung dari estimasi sehingga bukan kepastian pengeluaran.
+- Google Apps Script memiliki batas ukuran sel. Untuk periode sangat panjang, gunakan lebih banyak periode, bukan ribuan item dalam satu bulan.
+- Validasi yang dilakukan: sintaks JavaScript dan struktur paket. Uji instalasi, sinkronisasi live, dan UI pada HP sebenarnya tetap perlu dilakukan.
