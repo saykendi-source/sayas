@@ -1,7 +1,7 @@
 {
   "name": "SaySisten",
   "short_name": "SaySisten",
-  "description": "Ide, pengingat, donor darah, tagihan, tugas dan belanja bulanan",
+  "description": "Ide, pengingat, donor darah, tagihan, tugas, belanja bulanan dan servis kendaraan",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
