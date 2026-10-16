@@ -1,4 +1,38 @@
-# SaySisten v2.4 — Perbaikan Sinkron, Layar Hari Ini, Aksesibilitas
+# SaySisten v2.5 — Pajak Kendaraan, Pajak & Dokumen (PPh dll)
+
+## Instalasi (urutan penting)
+1. **Cadangkan dulu**: ⚙ → Backup JSON, dan salin Spreadsheet (File → Make a copy).
+2. **Backend**: Apps Script → ganti seluruh isi `Code.gs` dengan isi `Code.txt` (TOKEN lama sudah ada di file; sesuaikan bila berbeda).
+   Jalankan `authorize` sekali bila diminta izin ulang.
+3. **Deploy**: Deploy → Manage deployments → pensil → Version **New version** → Deploy (URL tetap sama).
+   Kolom baru `taxPreset`, `taxEvery`, `taxLast` ditambahkan otomatis ke sheet `Data`; data lama aman.
+4. **Frontend**: timpa `index.html`, `sw.js`, `manifest.webmanifest`, dan folder `icons/` di GitHub Pages.
+5. Buka aplikasi (HTTPS), ketuk **Perbarui sekarang** pada banner. Cek ⚙: versi **2.5.0**.
+
+## Fitur baru
+### Pajak kendaraan (di Rutinitas → Servis Kendaraan)
+- Ubah kendaraan → isi **Pajak tahunan jatuh tempo**, **Ganti plat 5 tahunan**, dan estimasi nominal (tanggal ada di STNK).
+- Kartu kendaraan menampilkan sisa waktu. Tombol **💳 Catat bayar pajak tahunan** memajukan jatuh tempo 1 tahun;
+  **🪪 Catat ganti plat 5 th** memajukan 5 tahun dan menggeser pajak tahunan bila sudah dekat jatuh tempo (tidak dobel).
+- Riwayat pajak muncul di tombol Riwayat.
+- Google Calendar: event 🧾 pajak tahunan (alarm 2 minggu dan 1 hari sebelum) dan 🪪 ganti plat (4 minggu, 1 minggu, 1 hari), selain 🔧 servis.
+- Perhatian merah muncul 30 hari (pajak) atau 60 hari (plat) sebelum jatuh tempo.
+
+### Pajak & Dokumen (di Rutinitas, kartu baru)
+- Preset: SPT Tahunan PPh OP (31 Maret), Bayar PPh bulanan (tanggal 15), PBB, Perpanjang SIM (60 bulan), Asuransi/BPJS, Lainnya.
+  Preset mengisi judul, interval, tanggal berikutnya, dan alarm; semua bisa diubah. Teks bantuan pada preset PPh bersifat umum:
+  pastikan sesuai ketentuan DJP dan jenis pajakmu.
+- **Catat sudah dibayar / dilapor**: jatuh tempo otomatis maju sesuai interval (interval 0 = selesai). Riwayat tercatat.
+- Ringkasan pajak kendaraan tampil di bagian yang sama. Muncul juga di tab **Hari ini** dan badge perhatian (14 hari sebelum jatuh tempo).
+- Tidak muncul di tab Pengingat supaya tidak ganda.
+
+## Catatan teknis
+- Pajak disimpan sebagai pengingat berjenis `tax`; pajak kendaraan disimpan dalam data kendaraan. Backup JSON dan Restore tetap mencakup semuanya.
+- `calId` kendaraan kini menyimpan JSON per jenis event; format lama terbaca otomatis.
+- Pembayaran pajak kendaraan terlambat melebihi satu periode melompat ke jatuh tempo mendatang terdekat.
+
+---
+# Riwayat: v2.4 — Perbaikan Sinkron, Layar Hari Ini, Aksesibilitas
 
 ## Instalasi (urutan penting)
 1. **Cadangkan dulu**: di aplikasi buka ⚙ → Backup JSON. Lalu di Google Drive buat salinan Spreadsheet (File → Make a copy).
