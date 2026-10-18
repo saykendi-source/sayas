@@ -1,4 +1,32 @@
-# SaySisten v2.5 — Pajak Kendaraan, Pajak & Dokumen (PPh dll)
+# SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
+
+## Instalasi
+Perubahan hanya di sisi tampilan; **backend (`Code.txt`) tidak berubah dari v2.5**, jadi tidak perlu deploy ulang Apps Script.
+1. Cadangkan data (⚙ → Backup JSON), lalu timpa `index.html`, `sw.js`, `manifest.webmanifest`, dan folder `icons/` di GitHub Pages.
+2. Buka aplikasi (HTTPS), ketuk **Perbarui sekarang** pada banner. Cek ⚙: versi **3.0.0**.
+   Bila tampilan lama masih muncul, tutup aplikasi sepenuhnya lalu buka lagi.
+
+## Yang berubah
+- **Material kaca**: kartu, statistik, kolom ide, tombol kecil, dan sheet memakai kaca tembus pandang dengan pantulan cahaya di tepi (highlight spekuler) di atas latar warna yang bergerak pelan.
+- **Navigasi bawah**: lensa kaca yang meluncur dan sedikit melentur (squish) saat berpindah tab.
+- **Tombol + cair**: saat ditekan, sheet formulir "membesar" dari posisi tombol dengan pegas (spring), tombol menghilang, dan layar belakang memburam.
+- **Morphing antar tab**: transisi blur + geser memakai View Transitions API (Chrome/Safari terbaru), dengan kartu muncul bertahap. Peramban lama otomatis memakai animasi kartu saja.
+- **Judul besar ala iOS**: judul mengecil menjadi bar kaca saat halaman digulir; banner dan status sinkron ikut menyusut.
+- **Umpan balik sentuh**: semua tombol dan kartu menekan dengan efek pegas.
+- Font memakai SF Pro (otomatis di iPhone); di perangkat lain memakai Plus Jakarta Sans.
+- Pilihan jenis di form kini muat dalam satu baris; tombol aksi kartu tidak lagi terhimpit.
+- Mode gelap mengikuti pengaturan HP. Warna status bar mengikuti tema.
+
+## Aksesibilitas dan performa
+- Menghormati *Reduce Motion* (semua animasi dimatikan) dan *Reduce Transparency* (kaca diganti latar solid).
+- Blur sungguhan hanya dipakai pada elemen yang menimpa konten (navigasi, sheet, tombol, toast, header saat digulir); kartu memakai kaca ringan tanpa blur agar daftar panjang tetap lancar di HP menengah.
+
+## Catatan
+- Efek kaca di sini adalah pendekatan CSS (blur, saturasi, highlight). Pembiasan cahaya sungguhan seperti iOS 26 tidak tersedia di web.
+- Dicoba di Chromium (layar 390 px, terang dan gelap) tanpa error. Belum dicoba di Safari iPhone; bila ada elemen yang terasa berat, kabari agar efeknya bisa dikurangi.
+
+---
+# Riwayat: v2.5 — Pajak Kendaraan, Pajak & Dokumen (PPh dll)
 
 ## Instalasi (urutan penting)
 1. **Cadangkan dulu**: ⚙ → Backup JSON, dan salin Spreadsheet (File → Make a copy).

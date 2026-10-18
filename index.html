@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#6d5dfc">
+<meta name="theme-color" content="#eceffb" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0a0914" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>SaySisten</title>
 <link rel="manifest" href="./manifest.webmanifest">
@@ -89,6 +89,106 @@ nav button{position:relative}.pending-label{display:inline-flex;align-items:cent
 nav{grid-template-columns:repeat(6,1fr);padding:6px}
 nav button{font-size:10px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* ===== v3.0 Liquid Glass (gaya iOS 26) ===== */
+:root{--spring:cubic-bezier(.34,1.56,.64,1);--glass:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.44));--glass-b:rgba(255,255,255,.78);--glass-sh:0 8px 26px rgba(70,50,170,.11),inset 0 1px 1px #fff,inset 0 -1px 1px rgba(255,255,255,.45);--sheetbg:linear-gradient(135deg,rgba(255,255,255,.9),rgba(255,255,255,.72));--bg:#eceffb;--tx:#17152c;--ln:rgba(120,110,170,.16);--field:rgba(120,110,170,.12)}
+@media(prefers-color-scheme:dark){:root{--glass:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));--glass-b:rgba(255,255,255,.17);--glass-sh:0 10px 30px rgba(0,0,0,.45),inset 0 1px 1px rgba(255,255,255,.25),inset 0 -1px 1px rgba(255,255,255,.04);--sheetbg:linear-gradient(135deg,rgba(44,40,78,.9),rgba(24,22,46,.84));--bg:#0a0914;--tx:#f4f2ff;--field:rgba(255,255,255,.09)}}
+html{background:var(--bg)}
+body{background:transparent;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Rounded','SF Pro Text','Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none;will-change:transform;background:radial-gradient(38% 32% at 18% 12%,rgba(124,100,255,.55),transparent 70%),radial-gradient(34% 30% at 88% 22%,rgba(255,122,184,.45),transparent 70%),radial-gradient(40% 34% at 80% 88%,rgba(56,189,248,.42),transparent 70%),radial-gradient(34% 30% at 8% 82%,rgba(255,196,90,.38),transparent 70%);animation:drift 26s ease-in-out infinite alternate}
+@media(prefers-color-scheme:dark){body::before{opacity:.5}}
+@keyframes drift{to{transform:translate3d(3%,2%,0) rotate(6deg) scale(1.08)}}
+button{transition:scale .4s var(--spring),background .25s,color .25s}
+button:active{scale:.93}
+/* header: judul besar yang mengecil + bar kaca saat digulir */
+header{background:none;color:var(--tx);padding:calc(env(safe-area-inset-top,0px) + 18px) 0 8px;border-radius:0;position:sticky;top:0;z-index:4;transition:background .35s,padding .35s,box-shadow .35s}
+.top{align-items:center}
+.top h1{font-size:clamp(26px,8.4vw,34px);font-weight:800;letter-spacing:-.03em;transition:font-size .45s var(--spring)}
+.top p{color:var(--mu);opacity:1;max-height:24px;overflow:hidden;transition:opacity .25s,max-height .35s,margin .35s}
+.stats{margin:12px 0 4px}
+.ibtn,.syncline,.banner{background:var(--glass);border:1px solid var(--glass-b);box-shadow:var(--glass-sh);backdrop-filter:blur(18px) saturate(1.8);-webkit-backdrop-filter:blur(18px) saturate(1.8);color:var(--tx)}
+.ibtn{width:46px;height:46px;border-radius:50%}
+.dot{border-color:transparent}
+.syncline{margin-top:10px;max-height:40px;overflow:hidden;transition:opacity .25s,max-height .35s,margin .35s,padding .35s}
+#bn{overflow:hidden;max-height:220px;transition:max-height .35s,opacity .25s}
+body.scrolled header{background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(26px) saturate(1.9);-webkit-backdrop-filter:blur(26px) saturate(1.9);padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:8px;box-shadow:0 1px 0 var(--glass-b),0 10px 28px rgba(60,40,150,.1)}
+body.scrolled .top h1{font-size:21px}
+body.scrolled .top p{opacity:0;max-height:0}
+body.scrolled .syncline{opacity:0;max-height:0;margin:0;padding-top:0;padding-bottom:0;border-width:0;pointer-events:none}
+body.scrolled #bn{max-height:0;opacity:0}
+/* material kaca untuk kartu */
+.card,.stat,.notice,.cap,.shopcard,.shopstats>div{background:var(--glass);border:1px solid var(--glass-b);box-shadow:var(--glass-sh);border-radius:26px}
+.card,.stat,.cap{position:relative;overflow:hidden}
+.card{transition:scale .45s var(--spring),box-shadow .3s}
+.card:active{scale:.975}
+.card::before{left:7px;width:4px;border-radius:4px}
+.card::after,.stat::after,.cap::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 90% at 0% 0%,rgba(255,255,255,.55),transparent 52%);opacity:.65}
+@media(prefers-color-scheme:dark){.card::after,.stat::after,.cap::after{opacity:.18}}
+.card>*{position:relative;z-index:1}
+.badge{border-radius:17px}
+.chk{border-color:rgba(120,110,170,.4);background:rgba(255,255,255,.35)}
+.chk.on{border-color:transparent}
+.chk:active{scale:.8}
+.mini{background:var(--glass);border:1px solid var(--glass-b);box-shadow:inset 0 1px 1px rgba(255,255,255,.7)}
+.shoptools button{background:var(--glass);border:1px solid var(--glass-b);border-radius:99px;box-shadow:inset 0 1px 1px rgba(255,255,255,.7)}
+.sum{border-radius:30px;position:relative;overflow:hidden;box-shadow:0 14px 34px rgba(16,185,129,.28),inset 0 1px 1px rgba(255,255,255,.55)}
+.sum::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 70% at 0% 0%,rgba(255,255,255,.4),transparent 55%)}
+.go{border-radius:50%;box-shadow:0 6px 16px rgba(109,93,252,.4),inset 0 1px 1px rgba(255,255,255,.6)}
+.navbadge{border:2px solid var(--bg)}
+/* navigasi: lensa kaca yang meluncur dan melentur antar tab */
+nav{background:var(--glass);border:1px solid var(--glass-b);border-radius:36px;padding:6px;box-shadow:0 16px 42px rgba(50,30,140,.24),inset 0 1px 1px #fff,inset 0 -1px 1px rgba(255,255,255,.3);backdrop-filter:blur(28px) saturate(2);-webkit-backdrop-filter:blur(28px) saturate(2)}
+nav::before{content:"";position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/6);border-radius:30px;background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(255,255,255,.58));box-shadow:0 5px 16px rgba(70,50,170,.2),inset 0 1px 1px #fff;transform:translateX(calc(var(--i,0)*100%));transition:transform .6s var(--spring)}
+@media(prefers-color-scheme:dark){nav::before{background:linear-gradient(135deg,rgba(255,255,255,.28),rgba(255,255,255,.1));box-shadow:0 5px 16px rgba(0,0,0,.4),inset 0 1px 1px rgba(255,255,255,.3)}}
+nav.squish::before{animation:squish .6s ease}
+@keyframes squish{30%{scale:1.22 .9}65%{scale:.97 1.05}}
+nav button{position:relative;z-index:1;border-radius:30px;background:none}
+nav button.on{background:none;color:var(--pri)}
+/* FAB cair yang berubah menjadi sheet */
+.fab{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(124,100,255,.95),rgba(255,122,184,.9));border:1px solid rgba(255,255,255,.55);box-shadow:0 14px 32px rgba(109,93,252,.45),inset 0 1px 1px rgba(255,255,255,.75),inset 0 -3px 8px rgba(255,255,255,.16);transition:scale .5s var(--spring),rotate .5s var(--spring),opacity .25s}
+.fab:active{scale:.86;rotate:90deg}
+body:has(#sheet.open) .fab{scale:0;opacity:0}
+#scrim{background:rgba(10,8,30,.3);backdrop-filter:blur(8px) saturate(1.2);-webkit-backdrop-filter:blur(8px) saturate(1.2)}
+#sheet{left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(540px,calc(100% - 20px));max-height:86vh;border-radius:36px;background:var(--sheetbg);border:1px solid var(--glass-b);box-shadow:0 30px 80px rgba(30,20,100,.38),inset 0 1px 1px rgba(255,255,255,.9);backdrop-filter:blur(40px) saturate(1.9);-webkit-backdrop-filter:blur(40px) saturate(1.9);transform:translate(-50%,0);scale:.2;opacity:0;filter:blur(10px);visibility:hidden;pointer-events:none;transform-origin:calc(100% - 40px) calc(100% - 114px);transition:scale .6s var(--spring),opacity .28s,filter .4s,visibility 0s .6s}
+#sheet.open{transform:translate(-50%,0);scale:1;opacity:1;filter:none;visibility:visible;pointer-events:auto;transition:scale .6s var(--spring),opacity .28s,filter .4s,visibility 0s}
+.grab{background:rgba(120,110,170,.35)}
+.fl input,.fl select,.fl textarea{background:var(--field);border:1.5px solid var(--glass-b);border-radius:17px}
+.fl input:focus,.fl select:focus,.fl textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,var(--pri) 22%,transparent)}
+.seg{background:var(--field);border-radius:20px}
+.seg button{border-radius:16px}
+.seg button.on{background:var(--glass);border:1px solid var(--glass-b);box-shadow:var(--glass-sh)}
+.btn{border-radius:21px;box-shadow:0 10px 22px rgba(109,93,252,.36),inset 0 1px 1px rgba(255,255,255,.55)}
+.btn.sec{background:var(--glass);border:1px solid var(--glass-b);color:var(--tx);box-shadow:var(--glass-sh)}
+.btn.del{box-shadow:none}
+#toast{background:rgba(25,22,50,.74);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:11px 20px;transform:translate(-50%,-90px);scale:.8;transition:transform .55s var(--spring),scale .55s var(--spring)}
+#toast.show{transform:translate(-50%,0);scale:1}
+/* morphing antar tab (View Transitions) + kartu muncul bertahap */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){display:none}
+#view{view-transition-name:view}
+::view-transition-old(view){animation:vt-out .2s ease both;mix-blend-mode:normal}
+::view-transition-new(view){animation:vt-in .5s var(--spring) both;mix-blend-mode:normal}
+@keyframes vt-out{to{opacity:0;filter:blur(8px);scale:.985}}
+@keyframes vt-in{from{opacity:0;filter:blur(8px);translate:0 14px}}
+@keyframes rise{from{opacity:0;translate:0 18px;scale:.97}}
+.enter>*{animation:rise .55s var(--spring) both}
+.enter>:nth-child(2){animation-delay:.04s}.enter>:nth-child(3){animation-delay:.08s}.enter>:nth-child(4){animation-delay:.12s}.enter>:nth-child(5){animation-delay:.16s}.enter>:nth-child(6){animation-delay:.2s}.enter>:nth-child(7){animation-delay:.24s}.enter>:nth-child(8){animation-delay:.28s}.enter>:nth-child(n+9){animation-delay:.32s}
+/* penyesuaian ukuran (layar kecil) */
+.top h1{font-size:clamp(23px,7vw,29px);line-height:1.12}
+body.scrolled .top h1{font-size:20px}
+nav button{font-size:9.5px;letter-spacing:-.02em;padding:8px 0 7px}
+.navbadge{min-width:16px;height:16px;font-size:9px;right:10%}
+.acts{flex-wrap:wrap}
+.mini{white-space:nowrap;padding:7px 11px}
+.seg{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:1fr}
+.seg button{font-size:11px;padding:8px 2px}
+.banner,.notice{padding:10px 14px;border-radius:20px}
+/* legibilitas navigasi di atas konten */
+nav{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.5)),rgba(236,239,251,.55);backdrop-filter:blur(30px) saturate(2);-webkit-backdrop-filter:blur(30px) saturate(2)}
+@media(prefers-color-scheme:dark){nav{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.05)),rgba(14,12,30,.62)}}
+nav button{font-size:9px;letter-spacing:-.03em;overflow:visible;text-overflow:clip}
+@media(prefers-color-scheme:dark){nav{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.05)),rgba(14,12,30,.76)}}
+@media(prefers-reduced-transparency:reduce){:root{--glass:linear-gradient(var(--card),var(--card));--sheetbg:linear-gradient(var(--card),var(--card))}nav,#sheet,#scrim,#toast,.ibtn,.syncline,.banner,header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@supports not (backdrop-filter:blur(1px)){:root{--glass:linear-gradient(var(--card),var(--card));--sheetbg:linear-gradient(var(--card),var(--card))}}
 </style>
 </head>
 <body>
@@ -107,7 +207,7 @@ nav button{font-size:10px;min-width:0;overflow:hidden;text-overflow:ellipsis;whi
 <div id="toast"></div>
 
 <script>
-const APP_VERSION='2.5.0';
+const APP_VERSION='3.0.0';
 /* ===== util ===== */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -410,7 +510,7 @@ function openCfg(){
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
   const a=el.dataset.act,id=el.dataset.id,it=id?find(id):null;
-  if(a==='tab'){tab=el.dataset.type;render();scrollTo(0,0)}
+  if(a==='tab'){vt(()=>{tab=el.dataset.type;render();scrollTo(0,0)})}
   else if(a==='new'){if(tab==='shopping'){if(routineView==='service')vehicleForm();else if(routineView==='shopping')shopItemForm();else if(routineView==='tax')openForm(newTax());else toast('Pilih Belanja, Servis, atau Pajak dahulu')}else openForm(blank(tab==='today'?'reminder':tab))}
   else if(a==='close')closeSheet()
   else if(a==='edit'&&it)openForm({...it})
@@ -593,11 +693,17 @@ function vVehicle(){const L=vehicleList();return `<div class="shoptitle"><h3 cla
 function vehicleForm(id){const v=vehicleData[id]||{id:uid(),kind:'motorcycle',name:'',plate:'',currentKm:'',interval:3,unit:'months',kmInterval:3000,services:[],pending:false};openSheet(`<h3>${id?'Ubah':'Tambah'} Kendaraan</h3>${fl('Nama kendaraan',`<input id="vh-name" value="${esc(v.name)}" placeholder="Mis. Honda Vario 160">`)}<div class="row">${fl('Jenis',`<select id="vh-kind"><option value="motorcycle" ${v.kind!=='car'?'selected':''}>Motor</option><option value="car" ${v.kind==='car'?'selected':''}>Mobil</option></select>`)}${fl('Nomor polisi (opsional)',`<input id="vh-plate" value="${esc(v.plate||'')}">`)}</div>${fl('Odometer terbaru (km)',`<input type="number" min="0" id="vh-km" value="${v.currentKm??''}">`)}<div class="row">${fl('Interval servis waktu',`<input type="number" min="1" id="vh-int" value="${v.interval||3}">`)}${fl('Satuan',`<select id="vh-unit"><option value="months" ${v.unit!=='days'?'selected':''}>Bulan</option><option value="days" ${v.unit==='days'?'selected':''}>Hari</option></select>`)}</div>${fl('Interval odometer (km)',`<input type="number" min="0" id="vh-kmint" value="${v.kmInterval??3000}">`)}<h3 class="sec">Pajak kendaraan</h3><div class="row">${fl('Pajak tahunan jatuh tempo',`<input type="date" id="vh-tax" value="${v.taxDate||''}">`)}${fl('Ganti plat 5 tahunan',`<input type="date" id="vh-plate5" value="${v.plateDate||''}">`)}</div>${fl('Estimasi pajak tahunan (Rp)',`<input type="number" min="0" id="vh-taxamt" value="${v.taxAmount||''}">`)}<p class="hint">Tanggal ada di STNK. Pajak tahunan jatuh tempo tiap tahun; ganti plat dan STNK tiap 5 tahun. Kosongkan bila belum ingin dipantau.</p><p class="hint">Isi catatan servis pertama melalui tombol + Catat servis setelah kendaraan disimpan.</p><div class="btns">${id?`<button class="btn del" data-vehicle="delete" data-id="${esc(id)}">Hapus</button>`:''}<button class="btn" data-vehicle="save" data-id="${esc(v.id)}">Simpan</button></div>`);if(!id)vehicleData[v.id]=v}
 function vehicleServiceForm(id){const v=vehicleData[id];if(!v)return;openSheet(`<h3>🛠️ Catat servis · ${esc(v.name)}</h3><p class="hint">Mencatat servis aktual akan menjadi acuan jadwal servis berikutnya.</p><div class="row">${fl('Tanggal servis',`<input type="date" id="vs-date" value="${today()}">`)}${fl('Odometer (km)',`<input type="number" min="0" id="vs-km" value="${v.currentKm??''}">`)}</div>${fl('Bengkel',`<input id="vs-workshop" placeholder="Nama bengkel / lokasi">`)}${fl('Jenis pekerjaan',`<textarea id="vs-work" rows="3" placeholder="Ganti oli, filter, rem... "></textarea>`)}${fl('Biaya servis (Rp)',`<input type="number" id="vs-cost" min="0" value="0">`)}<button class="btn" data-vehicle="saveservice" data-id="${esc(id)}">Simpan Servis</button>`)}
 function vehicleHistory(id){let v=vehicleData[id];if(!v)return;openSheet(`<h3>Riwayat · ${esc(v.name)}</h3>${[...v.services].sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div class="card" style="display:block"><b>${fmt(x.date)} · ${vehNum(x.km).toLocaleString('id-ID')} km</b><div class="m">${esc(x.workshop||'Bengkel tidak dicatat')} · ${rp(x.cost)}</div><p class="hint">${esc(x.work||'')}</p></div>`).join('')||'<p class="hint">Belum ada riwayat servis.</p>'}${(v.taxHistory||[]).length?'<h3 class="sec">Riwayat pajak</h3>'+[...v.taxHistory].sort((a,b)=>b.date.localeCompare(a.date)).map(x=>`<div class="card" style="display:block"><b>${fmt(x.date)} ${x.date.slice(0,4)}</b><div class="m">${x.kind==='plat5'?'Ganti plat / STNK 5 tahunan':'Pajak tahunan'}</div></div>`).join(''):''}<button class="btn sec" data-act="close">Tutup</button>`)}
-document.addEventListener('click',e=>{const el=e.target.closest('[data-routine],[data-vehicle]');if(!el)return;const act=el.dataset.routine||el.dataset.vehicle,id=el.dataset.id,v=vehicleData[id];if(el.dataset.routine){routineView=act;render();return}if(act==='add')vehicleForm();else if(act==='edit')vehicleForm(id);else if(act==='service')vehicleServiceForm(id);else if(act==='history')vehicleHistory(id);else if(act==='save'){const name=$('#vh-name').value.trim(),km=$('#vh-km').value;if(!name||(+km<0)||!Number.isFinite(Number(km))){toast('Nama atau odometer tidak valid');return}let obj=vehicleData[id]||{id,services:[]};Object.assign(obj,{name,kind:$('#vh-kind').value,plate:$('#vh-plate').value.trim(),currentKm:km===''?'':Number(km),interval:Math.max(1,parseInt($('#vh-int').value)||1),unit:$('#vh-unit').value,kmInterval:Math.max(0,parseInt($('#vh-kmint').value)||0),taxDate:$('#vh-tax').value||'',plateDate:$('#vh-plate5').value||'',taxAmount:Math.max(0,Number($('#vh-taxamt').value)||0)});vehicleSave(obj);closeSheet();toast('Kendaraan disimpan')}else if(act==='saveservice'){const date=$('#vs-date').value,km=Number($('#vs-km').value),cost=Number($('#vs-cost').value);if(!date||!$('#vs-km').value||!Number.isFinite(km)||km<0||!Number.isFinite(cost)||cost<0){toast('Isi tanggal, odometer, dan biaya valid');return}const prev=vehicleLast(v);if(prev&&km<vehNum(prev.km)){toast('Odometer tidak boleh kurang dari servis terakhir');return}v.services.push({id:uid(),date,km,workshop:$('#vs-workshop').value.trim(),work:$('#vs-work').value.trim(),cost});v.currentKm=km;v.pending=false;vehicleSave(v);closeSheet();toast('Riwayat servis ditambahkan')}else if(act==='km'){const k=prompt('Odometer terbaru (km)',v.currentKm??'');if(k===null)return;const n=Number(k);if(k===''||!Number.isFinite(n)||n<0){toast('Kilometer tidak valid');return}v.currentKm=n;vehicleSave(v)}else if(act==='paytax')vehTaxPay(id,'tax');else if(act==='payplate')vehTaxPay(id,'plate');else if(act==='pending'){v.pending=!v.pending;vehicleSave(v)}else if(act==='delete'){if(!confirm('Hapus kendaraan dari daftar? Riwayat akan disembunyikan.'))return;v.deleted=true;vehicleSave(v);closeSheet()}e.stopPropagation()});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-routine],[data-vehicle]');if(!el)return;const act=el.dataset.routine||el.dataset.vehicle,id=el.dataset.id,v=vehicleData[id];if(el.dataset.routine){vt(()=>{routineView=act;render()});return}if(act==='add')vehicleForm();else if(act==='edit')vehicleForm(id);else if(act==='service')vehicleServiceForm(id);else if(act==='history')vehicleHistory(id);else if(act==='save'){const name=$('#vh-name').value.trim(),km=$('#vh-km').value;if(!name||(+km<0)||!Number.isFinite(Number(km))){toast('Nama atau odometer tidak valid');return}let obj=vehicleData[id]||{id,services:[]};Object.assign(obj,{name,kind:$('#vh-kind').value,plate:$('#vh-plate').value.trim(),currentKm:km===''?'':Number(km),interval:Math.max(1,parseInt($('#vh-int').value)||1),unit:$('#vh-unit').value,kmInterval:Math.max(0,parseInt($('#vh-kmint').value)||0),taxDate:$('#vh-tax').value||'',plateDate:$('#vh-plate5').value||'',taxAmount:Math.max(0,Number($('#vh-taxamt').value)||0)});vehicleSave(obj);closeSheet();toast('Kendaraan disimpan')}else if(act==='saveservice'){const date=$('#vs-date').value,km=Number($('#vs-km').value),cost=Number($('#vs-cost').value);if(!date||!$('#vs-km').value||!Number.isFinite(km)||km<0||!Number.isFinite(cost)||cost<0){toast('Isi tanggal, odometer, dan biaya valid');return}const prev=vehicleLast(v);if(prev&&km<vehNum(prev.km)){toast('Odometer tidak boleh kurang dari servis terakhir');return}v.services.push({id:uid(),date,km,workshop:$('#vs-workshop').value.trim(),work:$('#vs-work').value.trim(),cost});v.currentKm=km;v.pending=false;vehicleSave(v);closeSheet();toast('Riwayat servis ditambahkan')}else if(act==='km'){const k=prompt('Odometer terbaru (km)',v.currentKm??'');if(k===null)return;const n=Number(k);if(k===''||!Number.isFinite(n)||n<0){toast('Kilometer tidak valid');return}v.currentKm=n;vehicleSave(v)}else if(act==='paytax')vehTaxPay(id,'tax');else if(act==='payplate')vehTaxPay(id,'plate');else if(act==='pending'){v.pending=!v.pending;vehicleSave(v)}else if(act==='delete'){if(!confirm('Hapus kendaraan dari daftar? Riwayat akan disembunyikan.'))return;v.deleted=true;vehicleSave(v);closeSheet()}e.stopPropagation()});
 
 /* ===== init ===== */
 $('#ic-cfg').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;
 
+/* ===== v3.0 gerakan Liquid Glass ===== */
+function enterAnim(){const v=$('#view');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');clearTimeout(enterAnim.t);enterAnim.t=setTimeout(()=>v.classList.remove('enter'),900)}
+function vt(fn){const run=()=>{fn();enterAnim()};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion:reduce)').matches){try{document.startViewTransition(run);return}catch(e){}}run()}
+let lensI=-1,lensT=0;const render0=render;
+render=function(){render0();const nav=$('#nav'),i=[...nav.children].findIndex(b=>b.classList.contains('on'));if(i<0)return;nav.style.setProperty('--i',i);if(lensI>=0&&i!==lensI){nav.classList.remove('squish');void nav.offsetWidth;nav.classList.add('squish');clearTimeout(lensT);lensT=setTimeout(()=>nav.classList.remove('squish'),700)}lensI=i};
+let scrolled=false;addEventListener('scroll',()=>{const y=scrollY;if(!scrolled&&y>60){scrolled=true;document.body.classList.add('scrolled')}else if(scrolled&&y<10){scrolled=false;document.body.classList.remove('scrolled')}},{passive:true});
 items=items.map(norm);render();localAlert();updSyncTxt();setInterval(updSyncTxt,5000);setSync(ok()?'busy':'local');pull();
 </script>
 </body>
