@@ -1,17 +1,17 @@
-# SaySisten v3.1.0 — Tema Terang/Gelap & Warna Aksen
+# SaySisten v3.1.2 — Ikon & Emoji Gaya iOS
 
 ## Instalasi
-Hanya frontend; backend (`Code.txt`) tidak berubah. Timpa `index.html` dan `sw.js` di GitHub Pages, buka aplikasi,
-ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.0**.
+Hanya frontend; backend (`Code.txt`) tidak berubah. Unggah ke GitHub Pages:
+`index.html`, `sw.js`, dan **folder baru `em/`** (31 gambar PNG, ±240 KB). Buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.2**.
+Folder `em/` wajib ikut diunggah; tanpa folder ini emoji akan tampil sebagai gambar rusak.
 
-## Yang baru (tampilan saja, fungsi tidak berubah)
-- **Tombol tema cepat** (☾ / ☀) di sebelah ⚙, juga di bar ringkas saat digulir: sekali ketuk berpindah terang ↔ gelap dengan transisi halus.
-- **Pengaturan tema** di ⚙: *Otomatis* (ikut HP, bawaan), *Terang*, atau *Gelap*. Warna status bar ikut menyesuaikan.
-- **Warna aksen**: Ungu (bawaan), Biru, Toska, Hijau, Oranye, Merah muda. Mengubah tombol utama, tombol +, tab aktif, dan cahaya latar.
-  Warna kategori (tagihan hijau, pengingat ungu, dst.) sengaja tetap supaya tetap mudah dikenali.
-- Tema dan aksen disimpan lokal per HP (tidak ikut sinkron/backup) dan diterapkan sebelum halaman tampil, jadi tidak berkedip.
-- **Perapian**: tombol di ⚙ (Backup/Restore, Riwayat/Notifikasi, Instal/Cek pembaruan) tidak lagi terpotong di layar kecil;
-  judul sapaan dipecah rapi dua baris; kolom isian menampilkan garis fokus sesuai warna aksen.
+## Yang berubah (tampilan saja)
+- **Ikon Ionicons** (lisensi MIT) bergaya iOS untuk navigasi bawah, ⚙, +, tema, centang, dan sematkan.
+  Tab yang sedang dibuka memakai ikon bentuk penuh, tab lain bentuk garis, seperti tab bar iPhone.
+- **Fluent Emoji 3D** (lisensi MIT, Microsoft) menggantikan emoji di tampilan aplikasi: sapaan, kartu Rutinitas, kendaraan, pajak,
+  banner perhatian, tombol, notifikasi toast, dan sheet. Tampil sama di semua HP (Android maupun iPhone).
+- Gambar emoji disimpan di cache aplikasi, jadi tetap tampil saat offline.
+- Emoji yang diketik sendiri di judul item dan judul event Google Calendar tetap memakai emoji bawaan HP.
 
 ---
 # SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
