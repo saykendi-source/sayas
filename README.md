@@ -1,17 +1,20 @@
-# SaySisten v3.1.2 — Ikon & Emoji Gaya iOS
+# SaySisten v3.1.3 — Perbaikan fungsi (prioritas sedang)
 
 ## Instalasi
-Hanya frontend; backend (`Code.txt`) tidak berubah. Unggah ke GitHub Pages:
-`index.html`, `sw.js`, dan **folder baru `em/`** (31 gambar PNG, ±240 KB). Buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.2**.
-Folder `em/` wajib ikut diunggah; tanpa folder ini emoji akan tampil sebagai gambar rusak.
+Hanya frontend; backend (`Code.txt`) tidak berubah. Timpa `index.html` dan `sw.js` (folder `em/` dari v3.1.2 tetap dipakai),
+buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.3**.
 
-## Yang berubah (tampilan saja)
-- **Ikon Ionicons** (lisensi MIT) bergaya iOS untuk navigasi bawah, ⚙, +, tema, centang, dan sematkan.
-  Tab yang sedang dibuka memakai ikon bentuk penuh, tab lain bentuk garis, seperti tab bar iPhone.
-- **Fluent Emoji 3D** (lisensi MIT, Microsoft) menggantikan emoji di tampilan aplikasi: sapaan, kartu Rutinitas, kendaraan, pajak,
-  banner perhatian, tombol, notifikasi toast, dan sheet. Tampil sama di semua HP (Android maupun iPhone).
-- Gambar emoji disimpan di cache aplikasi, jadi tetap tampil saat offline.
-- Emoji yang diketik sendiri di judul item dan judul event Google Calendar tetap memakai emoji bawaan HP.
+## Perbaikan
+- **Event Calendar kendaraan tidak lagi terhapus setelah tanggalnya lewat.** Servis, pajak tahunan, dan ganti plat yang terlambat
+  tetap tercatat di Calendar; event baru dibuat saat servis dicatat atau pajak dibayar.
+- **Tunda untuk perhatian kendaraan.** Tombol 🕒 *Tunda servis* dan 🕒 *Tunda pajak* muncul di kartu kendaraan saat perlu perhatian.
+  Badge disembunyikan sampai tanggal yang dipilih (chip menampilkan "ditunda s.d. …"); pengingat Calendar tetap berjalan.
+  Tunda otomatis batal setelah servis dicatat atau pajak dibayar.
+- **Badge Belanja Bulanan muncul walau tab belum dibuka bulan ini**, memakai target tanggal bulan sebelumnya (bawaan tanggal 5)
+  bila ada barang rutin.
+- **Odometer diisi lewat sheet**, bukan kotak dialog browser, dan ditolak bila lebih kecil dari kilometer servis terakhir.
+- **Sinkron lebih aman:** perubahan yang dibuat saat aplikasi sedang menarik data server tidak lagi tertimpa,
+  dan dialog "Data belum sama" tidak muncul tanpa alasan.
 
 ---
 # SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
