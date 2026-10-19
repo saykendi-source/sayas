@@ -1,3 +1,16 @@
+# SaySisten v3.0.1 — Perbaikan header bergetar saat digulir
+
+## Instalasi
+Hanya frontend. Timpa `index.html` dan `sw.js` di GitHub Pages, buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.0.1**.
+
+## Perbaikan
+- **Header bergetar/berkedip saat digulir (terutama di halaman pendek).** Penyebab: header *sticky* menyusut ±180 px ketika digulir,
+  sehingga halaman memendek, posisi gulir terpental ke atas, header membesar lagi, dan berulang terus.
+- Solusi: header besar (judul, tanggal, status sinkron, banner perhatian) kini ikut tergulir normal dan tingginya tidak pernah berubah.
+  Saat digulir muncul **bar ringkas terpisah** (judul + tombol ⚙ dengan titik status sinkron) yang memudar masuk tanpa menggeser konten.
+- Bar ringkas lebih pekat agar teks di belakangnya tidak terbaca tembus.
+
+---
 # SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
 
 ## Instalasi

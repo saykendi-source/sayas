@@ -101,21 +101,22 @@ body::before{content:"";position:fixed;inset:-25%;z-index:-1;pointer-events:none
 button{transition:scale .4s var(--spring),background .25s,color .25s}
 button:active{scale:.93}
 /* header: judul besar yang mengecil + bar kaca saat digulir */
-header{background:none;color:var(--tx);padding:calc(env(safe-area-inset-top,0px) + 18px) 0 8px;border-radius:0;position:sticky;top:0;z-index:4;transition:background .35s,padding .35s,box-shadow .35s}
+header{background:none;color:var(--tx);padding:calc(env(safe-area-inset-top,0px) + 18px) 0 8px;border-radius:0;position:relative}
 .top{align-items:center}
-.top h1{font-size:clamp(26px,8.4vw,34px);font-weight:800;letter-spacing:-.03em;transition:font-size .45s var(--spring)}
-.top p{color:var(--mu);opacity:1;max-height:24px;overflow:hidden;transition:opacity .25s,max-height .35s,margin .35s}
+.top h1{font-size:clamp(26px,8.4vw,34px);font-weight:800;letter-spacing:-.03em}
+.top p{color:var(--mu)}
 .stats{margin:12px 0 4px}
 .ibtn,.syncline,.banner{background:var(--glass);border:1px solid var(--glass-b);box-shadow:var(--glass-sh);backdrop-filter:blur(18px) saturate(1.8);-webkit-backdrop-filter:blur(18px) saturate(1.8);color:var(--tx)}
 .ibtn{width:46px;height:46px;border-radius:50%}
 .dot{border-color:transparent}
-.syncline{margin-top:10px;max-height:40px;overflow:hidden;transition:opacity .25s,max-height .35s,margin .35s,padding .35s}
-#bn{overflow:hidden;max-height:220px;transition:max-height .35s,opacity .25s}
-body.scrolled header{background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(26px) saturate(1.9);-webkit-backdrop-filter:blur(26px) saturate(1.9);padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:8px;box-shadow:0 1px 0 var(--glass-b),0 10px 28px rgba(60,40,150,.1)}
-body.scrolled .top h1{font-size:21px}
-body.scrolled .top p{opacity:0;max-height:0}
-body.scrolled .syncline{opacity:0;max-height:0;margin:0;padding-top:0;padding-bottom:0;border-width:0;pointer-events:none}
-body.scrolled #bn{max-height:0;opacity:0}
+.syncline{margin-top:10px}
+/* bar ringkas terpisah (fixed): muncul saat digulir tanpa mengubah tinggi halaman */
+#minibar{position:fixed;top:0;left:0;right:0;z-index:6;padding:calc(env(safe-area-inset-top,0px) + 8px) 0 8px;background:color-mix(in srgb,var(--bg) 93%,transparent);backdrop-filter:blur(26px) saturate(1.9);-webkit-backdrop-filter:blur(26px) saturate(1.9);box-shadow:0 1px 0 var(--glass-b),0 10px 28px rgba(60,40,150,.1);opacity:0;translate:0 -10px;pointer-events:none;transition:opacity .22s,translate .3s var(--spring)}
+#minibar .top{align-items:center;gap:10px}
+#minibar h2{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;margin:0}
+#minibar .ibtn{width:38px;height:38px;flex:none}
+#minibar .dot{top:3px;right:3px}
+body.scrolled #minibar{opacity:1;translate:0 0;pointer-events:auto}
 /* material kaca untuk kartu */
 .card,.stat,.notice,.cap,.shopcard,.shopstats>div{background:var(--glass);border:1px solid var(--glass-b);box-shadow:var(--glass-sh);border-radius:26px}
 .card,.stat,.cap{position:relative;overflow:hidden}
@@ -174,7 +175,6 @@ body:has(#sheet.open) .fab{scale:0;opacity:0}
 .enter>:nth-child(2){animation-delay:.04s}.enter>:nth-child(3){animation-delay:.08s}.enter>:nth-child(4){animation-delay:.12s}.enter>:nth-child(5){animation-delay:.16s}.enter>:nth-child(6){animation-delay:.2s}.enter>:nth-child(7){animation-delay:.24s}.enter>:nth-child(8){animation-delay:.28s}.enter>:nth-child(n+9){animation-delay:.32s}
 /* penyesuaian ukuran (layar kecil) */
 .top h1{font-size:clamp(23px,7vw,29px);line-height:1.12}
-body.scrolled .top h1{font-size:20px}
 nav button{font-size:9.5px;letter-spacing:-.02em;padding:8px 0 7px}
 .navbadge{min-width:16px;height:16px;font-size:9px;right:10%}
 .acts{flex-wrap:wrap}
@@ -187,7 +187,7 @@ nav{background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(255,255,255,.5))
 @media(prefers-color-scheme:dark){nav{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.05)),rgba(14,12,30,.62)}}
 nav button{font-size:9px;letter-spacing:-.03em;overflow:visible;text-overflow:clip}
 @media(prefers-color-scheme:dark){nav{background:linear-gradient(135deg,rgba(255,255,255,.14),rgba(255,255,255,.05)),rgba(14,12,30,.76)}}
-@media(prefers-reduced-transparency:reduce){:root{--glass:linear-gradient(var(--card),var(--card));--sheetbg:linear-gradient(var(--card),var(--card))}nav,#sheet,#scrim,#toast,.ibtn,.syncline,.banner,header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@media(prefers-reduced-transparency:reduce){#minibar{background:var(--bg)}:root{--glass:linear-gradient(var(--card),var(--card));--sheetbg:linear-gradient(var(--card),var(--card))}nav,#sheet,#scrim,#toast,.ibtn,.syncline,.banner,header,#minibar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
 @supports not (backdrop-filter:blur(1px)){:root{--glass:linear-gradient(var(--card),var(--card));--sheetbg:linear-gradient(var(--card),var(--card))}}
 </style>
 </head>
@@ -196,6 +196,7 @@ nav button{font-size:9px;letter-spacing:-.03em;overflow:visible;text-overflow:cl
   <div class="top"><div><h1 id="hi"></h1><p id="dt"></p></div><button class="ibtn" data-act="cfg" aria-label="Pengaturan"><i id="ic-cfg"></i><span class="dot" id="dot"></span></button></div>
   <div class="syncline" id="synctxt" data-act="syncnow" role="button" tabindex="0"></div><div id="bn"></div>
 </div></header>
+<div id="minibar" aria-hidden="true"><div class="wrap"><div class="top"><h2 id="hi2"></h2><button class="ibtn" data-act="cfg" aria-label="Pengaturan" tabindex="-1"><i id="ic-cfg2"></i><span class="dot" id="dot2"></span></button></div></div></div>
 <main class="wrap">
   <div class="stats" id="stats"></div>
   <div id="view"></div>
@@ -207,7 +208,7 @@ nav button{font-size:9px;letter-spacing:-.03em;overflow:visible;text-overflow:cl
 <div id="toast"></div>
 
 <script>
-const APP_VERSION='3.0.0';
+const APP_VERSION='3.0.1';
 /* ===== util ===== */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -246,7 +247,7 @@ const blank=type=>({id:uid(),type,title:'',note:'',date:'',time:'',place:'',repe
 const norm=o=>({...blank(o.type),...o,done:o.done===true||o.done==='true',pinned:o.pinned===true||o.pinned==='true',remind:+o.remind||0,amount:+o.amount||0,prio:+o.prio||0,donorCount:+o.donorCount||0,donorInterval:+o.donorInterval||70,donorHistory:Array.isArray(o.donorHistory)?o.donorHistory:[],status:(['open','pending','done'].includes(o.status)?o.status:'open'),pendingMonths:String(o.pendingMonths||''),history:Array.isArray(o.history)?o.history:[],snoozeUntil:o.snoozeUntil||'',taxPreset:o.taxPreset||'custom',taxEvery:(o.taxEvery===''||o.taxEvery==null)?12:(+o.taxEvery||0),taxLast:o.taxLast||''});
 
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3200)}
-function setSync(s){syncState=s;$('#dot').className='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'');updSyncTxt()}
+function setSync(s){syncState=s;{const c='dot '+({ok:'ok',busy:'busy',err:'err'}[s]||'');$('#dot').className=c;$('#dot2').className=c}updSyncTxt()}
 
 /* ===== sync ===== */
 async function api(body,get){
@@ -357,7 +358,7 @@ function statusChip(x){return x.status==='pending'?'<span class="chip bad">Belum
 /* ===== render ===== */
 function render(){
   const h=new Date().getHours(),g=h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam';
-  $('#hi').textContent=`${g}${cfg.name?', '+cfg.name:''} 👋`;
+  $('#hi').textContent=$('#hi2').textContent=`${g}${cfg.name?', '+cfg.name:''} 👋`;
   const n=new Date();$('#dt').textContent=`${DAY[n.getDay()]}, ${n.getDate()} ${MON[n.getMonth()]} ${n.getFullYear()}`;
   $('#bn').innerHTML=(ok()?'':'<div class="banner">Mode lokal: data hanya di HP ini. Buka ⚙ untuk hubungkan Google Calendar.</div>')+(deferredInstallPrompt?'<div class="banner"><button data-act="install">📲 Instal aplikasi pada HP</button></div>':'');
   const T=today(),R=items.filter(x=>x.type==='reminder'&&!x.done),B=items.filter(x=>x.type==='bill').map(b=>({b,i:billInfo(b)}));
@@ -696,14 +697,14 @@ function vehicleHistory(id){let v=vehicleData[id];if(!v)return;openSheet(`<h3>Ri
 document.addEventListener('click',e=>{const el=e.target.closest('[data-routine],[data-vehicle]');if(!el)return;const act=el.dataset.routine||el.dataset.vehicle,id=el.dataset.id,v=vehicleData[id];if(el.dataset.routine){vt(()=>{routineView=act;render()});return}if(act==='add')vehicleForm();else if(act==='edit')vehicleForm(id);else if(act==='service')vehicleServiceForm(id);else if(act==='history')vehicleHistory(id);else if(act==='save'){const name=$('#vh-name').value.trim(),km=$('#vh-km').value;if(!name||(+km<0)||!Number.isFinite(Number(km))){toast('Nama atau odometer tidak valid');return}let obj=vehicleData[id]||{id,services:[]};Object.assign(obj,{name,kind:$('#vh-kind').value,plate:$('#vh-plate').value.trim(),currentKm:km===''?'':Number(km),interval:Math.max(1,parseInt($('#vh-int').value)||1),unit:$('#vh-unit').value,kmInterval:Math.max(0,parseInt($('#vh-kmint').value)||0),taxDate:$('#vh-tax').value||'',plateDate:$('#vh-plate5').value||'',taxAmount:Math.max(0,Number($('#vh-taxamt').value)||0)});vehicleSave(obj);closeSheet();toast('Kendaraan disimpan')}else if(act==='saveservice'){const date=$('#vs-date').value,km=Number($('#vs-km').value),cost=Number($('#vs-cost').value);if(!date||!$('#vs-km').value||!Number.isFinite(km)||km<0||!Number.isFinite(cost)||cost<0){toast('Isi tanggal, odometer, dan biaya valid');return}const prev=vehicleLast(v);if(prev&&km<vehNum(prev.km)){toast('Odometer tidak boleh kurang dari servis terakhir');return}v.services.push({id:uid(),date,km,workshop:$('#vs-workshop').value.trim(),work:$('#vs-work').value.trim(),cost});v.currentKm=km;v.pending=false;vehicleSave(v);closeSheet();toast('Riwayat servis ditambahkan')}else if(act==='km'){const k=prompt('Odometer terbaru (km)',v.currentKm??'');if(k===null)return;const n=Number(k);if(k===''||!Number.isFinite(n)||n<0){toast('Kilometer tidak valid');return}v.currentKm=n;vehicleSave(v)}else if(act==='paytax')vehTaxPay(id,'tax');else if(act==='payplate')vehTaxPay(id,'plate');else if(act==='pending'){v.pending=!v.pending;vehicleSave(v)}else if(act==='delete'){if(!confirm('Hapus kendaraan dari daftar? Riwayat akan disembunyikan.'))return;v.deleted=true;vehicleSave(v);closeSheet()}e.stopPropagation()});
 
 /* ===== init ===== */
-$('#ic-cfg').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;
+$('#ic-cfg').outerHTML=I.cfg;$('#ic-cfg2').outerHTML=I.cfg;$('#ic-plus').outerHTML=I.plus;
 
 /* ===== v3.0 gerakan Liquid Glass ===== */
 function enterAnim(){const v=$('#view');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');clearTimeout(enterAnim.t);enterAnim.t=setTimeout(()=>v.classList.remove('enter'),900)}
 function vt(fn){const run=()=>{fn();enterAnim()};if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion:reduce)').matches){try{document.startViewTransition(run);return}catch(e){}}run()}
 let lensI=-1,lensT=0;const render0=render;
 render=function(){render0();const nav=$('#nav'),i=[...nav.children].findIndex(b=>b.classList.contains('on'));if(i<0)return;nav.style.setProperty('--i',i);if(lensI>=0&&i!==lensI){nav.classList.remove('squish');void nav.offsetWidth;nav.classList.add('squish');clearTimeout(lensT);lensT=setTimeout(()=>nav.classList.remove('squish'),700)}lensI=i};
-let scrolled=false;addEventListener('scroll',()=>{const y=scrollY;if(!scrolled&&y>60){scrolled=true;document.body.classList.add('scrolled')}else if(scrolled&&y<10){scrolled=false;document.body.classList.remove('scrolled')}},{passive:true});
+let scrolled=false;const onScroll=()=>{const y=scrollY,on=y>56;if(on!==scrolled){scrolled=on;document.body.classList.toggle('scrolled',on);const mb=$('#minibar');mb.setAttribute('aria-hidden',on?'false':'true');mb.querySelector('button').tabIndex=on?0:-1}};addEventListener('scroll',onScroll,{passive:true});onScroll();
 items=items.map(norm);render();localAlert();updSyncTxt();setInterval(updSyncTxt,5000);setSync(ok()?'busy':'local');pull();
 </script>
 </body>
