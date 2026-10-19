@@ -1,14 +1,17 @@
-# SaySisten v3.0.1 — Perbaikan header bergetar saat digulir
+# SaySisten v3.1.0 — Tema Terang/Gelap & Warna Aksen
 
 ## Instalasi
-Hanya frontend. Timpa `index.html` dan `sw.js` di GitHub Pages, buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.0.1**.
+Hanya frontend; backend (`Code.txt`) tidak berubah. Timpa `index.html` dan `sw.js` di GitHub Pages, buka aplikasi,
+ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.0**.
 
-## Perbaikan
-- **Header bergetar/berkedip saat digulir (terutama di halaman pendek).** Penyebab: header *sticky* menyusut ±180 px ketika digulir,
-  sehingga halaman memendek, posisi gulir terpental ke atas, header membesar lagi, dan berulang terus.
-- Solusi: header besar (judul, tanggal, status sinkron, banner perhatian) kini ikut tergulir normal dan tingginya tidak pernah berubah.
-  Saat digulir muncul **bar ringkas terpisah** (judul + tombol ⚙ dengan titik status sinkron) yang memudar masuk tanpa menggeser konten.
-- Bar ringkas lebih pekat agar teks di belakangnya tidak terbaca tembus.
+## Yang baru (tampilan saja, fungsi tidak berubah)
+- **Tombol tema cepat** (☾ / ☀) di sebelah ⚙, juga di bar ringkas saat digulir: sekali ketuk berpindah terang ↔ gelap dengan transisi halus.
+- **Pengaturan tema** di ⚙: *Otomatis* (ikut HP, bawaan), *Terang*, atau *Gelap*. Warna status bar ikut menyesuaikan.
+- **Warna aksen**: Ungu (bawaan), Biru, Toska, Hijau, Oranye, Merah muda. Mengubah tombol utama, tombol +, tab aktif, dan cahaya latar.
+  Warna kategori (tagihan hijau, pengingat ungu, dst.) sengaja tetap supaya tetap mudah dikenali.
+- Tema dan aksen disimpan lokal per HP (tidak ikut sinkron/backup) dan diterapkan sebelum halaman tampil, jadi tidak berkedip.
+- **Perapian**: tombol di ⚙ (Backup/Restore, Riwayat/Notifikasi, Instal/Cek pembaruan) tidak lagi terpotong di layar kecil;
+  judul sapaan dipecah rapi dua baris; kolom isian menampilkan garis fokus sesuai warna aksen.
 
 ---
 # SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
