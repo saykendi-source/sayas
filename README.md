@@ -1,20 +1,21 @@
-# SaySisten v3.1.3 — Perbaikan fungsi (prioritas sedang)
+# SaySisten v3.1.4 — Tanggal 29–31 di bulan pendek
 
-## Instalasi
-Hanya frontend; backend (`Code.txt`) tidak berubah. Timpa `index.html` dan `sw.js` (folder `em/` dari v3.1.2 tetap dipakai),
-buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.3**.
+## Instalasi (urutan penting: backend dulu)
+1. **Backend.** Buka Apps Script, ganti isi `Code.gs` dengan `Code.txt` (cocokkan TOKEN seperti biasa).
+2. **Aktifkan layanan Calendar API:** di editor Apps Script, panel kiri **Services → + → Google Calendar API → Add**.
+3. **Deploy → Manage deployments → Edit → Version: New version → Deploy** (URL tetap sama).
+4. Di editor, pilih fungsi **`perbaikiAkhirBulan`** lalu **Run** sekali (izinkan akses bila diminta).
+   Ini membuat ulang event bulanan tanggal 29–31 yang sudah ada.
+5. **Frontend.** Timpa `index.html` dan `sw.js` (folder `em/` tetap), buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.4**.
 
 ## Perbaikan
-- **Event Calendar kendaraan tidak lagi terhapus setelah tanggalnya lewat.** Servis, pajak tahunan, dan ganti plat yang terlambat
-  tetap tercatat di Calendar; event baru dibuat saat servis dicatat atau pajak dibayar.
-- **Tunda untuk perhatian kendaraan.** Tombol 🕒 *Tunda servis* dan 🕒 *Tunda pajak* muncul di kartu kendaraan saat perlu perhatian.
-  Badge disembunyikan sampai tanggal yang dipilih (chip menampilkan "ditunda s.d. …"); pengingat Calendar tetap berjalan.
-  Tunda otomatis batal setelah servis dicatat atau pajak dibayar.
-- **Badge Belanja Bulanan muncul walau tab belum dibuka bulan ini**, memakai target tanggal bulan sebelumnya (bawaan tanggal 5)
-  bila ada barang rutin.
-- **Odometer diisi lewat sheet**, bukan kotak dialog browser, dan ditolak bila lebih kecil dari kilometer servis terakhir.
-- **Sinkron lebih aman:** perubahan yang dibuat saat aplikasi sedang menarik data server tidak lagi tertimpa,
-  dan dialog "Data belum sama" tidak muncul tanpa alasan.
+- **Tagihan dan pengingat bulanan tanggal 29, 30, atau 31 kini tetap berbunyi di Google Calendar setiap bulan.**
+  Di bulan yang lebih pendek, event jatuh di hari terakhir bulan itu (mis. tanggal 31 → 30 Nov, 28/29 Feb),
+  sama dengan yang ditampilkan aplikasi. Sebelumnya Calendar melewatkan bulan-bulan tersebut.
+- **Tanggal jatuh tempo tagihan tidak lagi bergeser permanen.** Tagihan tanggal 31 yang dibuat di bulan 30 hari
+  dulu tersimpan sebagai tanggal 30 untuk seterusnya; kini tanggal yang kamu isi disimpan terpisah (kolom baru `dueDay`).
+- Tagihan lama yang sudah terlanjur bergeser ke 30: buka, isi ulang tanggal 31, simpan.
+- Bila layanan Calendar API belum diaktifkan, backend tetap berjalan seperti sebelumnya (tanpa perbaikan ini).
 
 ---
 # SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
