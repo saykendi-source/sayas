@@ -1,21 +1,25 @@
-# SaySisten v3.1.4 — Tanggal 29–31 di bulan pendek
+# SaySisten v3.1.5 — Tandai pajak, servis & donor dengan jelas + bisa dibatalkan
 
-## Instalasi (urutan penting: backend dulu)
-1. **Backend.** Buka Apps Script, ganti isi `Code.gs` dengan `Code.txt` (cocokkan TOKEN seperti biasa).
-2. **Aktifkan layanan Calendar API:** di editor Apps Script, panel kiri **Services → + → Google Calendar API → Add**.
-3. **Deploy → Manage deployments → Edit → Version: New version → Deploy** (URL tetap sama).
-4. Di editor, pilih fungsi **`perbaikiAkhirBulan`** lalu **Run** sekali (izinkan akses bila diminta).
-   Ini membuat ulang event bulanan tanggal 29–31 yang sudah ada.
-5. **Frontend.** Timpa `index.html` dan `sw.js` (folder `em/` tetap), buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.4**.
+## Instalasi
+Hanya frontend; backend v3.1.4 tetap dipakai. Timpa `index.html` dan `sw.js` (folder `em/` tetap),
+buka aplikasi, ketuk **Perbarui sekarang**. Cek ⚙: versi **3.1.5**.
 
-## Perbaikan
-- **Tagihan dan pengingat bulanan tanggal 29, 30, atau 31 kini tetap berbunyi di Google Calendar setiap bulan.**
-  Di bulan yang lebih pendek, event jatuh di hari terakhir bulan itu (mis. tanggal 31 → 30 Nov, 28/29 Feb),
-  sama dengan yang ditampilkan aplikasi. Sebelumnya Calendar melewatkan bulan-bulan tersebut.
-- **Tanggal jatuh tempo tagihan tidak lagi bergeser permanen.** Tagihan tanggal 31 yang dibuat di bulan 30 hari
-  dulu tersimpan sebagai tanggal 30 untuk seterusnya; kini tanggal yang kamu isi disimpan terpisah (kolom baru `dueDay`).
-- Tagihan lama yang sudah terlanjur bergeser ke 30: buka, isi ulang tanggal 31, simpan.
-- Bila layanan Calendar API belum diaktifkan, backend tetap berjalan seperti sebelumnya (tanpa perbaikan ini).
+## Cara menandai pajak motor sudah dibayar
+Rutinitas → Servis Kendaraan (atau Pajak & Dokumen) → tombol **✓ Sudah bayar pajak tahunan** → isi tanggal bayar → **Simpan**.
+Jatuh tempo maju 1 tahun dan muncul chip hijau **✓ Dibayar [tanggal]**. Di tahun ganti plat, tombolnya
+**✓ Sudah bayar pajak + ganti plat** (5 tahunan sekaligus tahunan).
+
+## Perubahan
+- **Kartu kendaraan dibagi dua bagian:** 🛠️ Servis dan 🧾 Pajak & STNK, masing-masing dengan tombol dan tunda sendiri.
+  Tombol utama ditonjolkan (✓ Catat servis, ✓ Sudah bayar…). Chip jatuh tempo yang masih jauh berwarna netral, bukan merah.
+- **Status lunas terlihat:** chip hijau "✓ Dibayar [tanggal]"; tombol bayar disembunyikan setelah dibayar sampai mendekati jatuh tempo berikutnya.
+  Pajak tahunan + ganti plat di tahun yang sama tampil satu baris.
+- **Pajak & Dokumen:** kartu pajak kendaraan kini punya tombol ✓ Sudah bayar langsung, tanpa pindah ke Servis Kendaraan.
+- **Pratinjau sebelum simpan:** sheet bayar menampilkan tanggal lama → baru dan peringatan bila tanggal sama sudah dicatat
+  (menggantikan kotak konfirmasi browser). Berlaku juga untuk Pajak & Dokumen ("✓ Sudah dibayar / dilapor").
+- **Bisa dibatalkan:** setelah mencatat pajak, ganti plat, servis, pajak/dokumen, atau donor, notifikasi menampilkan tombol
+  **Batalkan** (±7 detik). Di Riwayat kendaraan, pembayaran pajak terakhir bisa **↩ Batalkan** (jatuh tempo dikembalikan),
+  dan catatan servis/pajak bisa dihapus.
 
 ---
 # SaySisten v3.0 — Tampilan Liquid Glass (gaya iOS)
